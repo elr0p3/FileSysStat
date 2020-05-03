@@ -1,3 +1,5 @@
+package r0p3;
+
 import java.util.HashMap; 
 // import java.util.Map; 
 
@@ -5,8 +7,10 @@ import java.io.BufferedReader;
 import java.io.IOException; 
 import java.io.InputStreamReader; 
 
-import java.nio.file.Path;
+import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 public class FileSystem {
 
@@ -56,11 +60,24 @@ public class FileSystem {
     /**
      * Allows you to loop through the file system recursively
      * */
-    public void travelDirectories () {
+    public void travelDirectories () throws IOException {
         travelDirectories(start_path);
     }
-    public void travelDirectories (String path) {
-                    
+    public void travelDirectories (String path) throws IOException {
+        Path root = Paths.get( path );
+        Iterable<Path> list = Files.newDirectoryStream(root);
+
+        if (list == null) return;
+
+        for (Path f : list) {
+            if ( Files.isDirectory(f) ) {
+                System.out.println( "Dir:" + f.toRealPath() );
+                travelDirectories( f.toAbsolutePath().toString() );
+            }
+            else {
+                System.out.println( "File:" + f.toRealPath() );
+            }
+        }
     }
 
 }
