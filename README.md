@@ -1,4 +1,4 @@
-# Object Oriented Programming project
+# File System Statistics (OOP project)
 
 
 Scan the filesystem to obtain information, such as:
