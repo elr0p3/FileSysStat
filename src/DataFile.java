@@ -1,13 +1,13 @@
 
 public class DataFile {
 
-    private String extention    = "";
-    private Float size          = 0.0;
-    private Float percentage    = 0.0;
+    private String extention = "";
+    private Float size;
+    private Float percentage = 0.0f;
 
     public DataFile (String extention) {
         this.extention = extention;
-        this.size = 0.0;
+        this.size = 0.0f;
     }
 
 
