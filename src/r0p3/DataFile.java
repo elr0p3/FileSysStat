@@ -7,7 +7,9 @@ public class DataFile {
     private Float percentage = 0.0f;
 
     /**
-     * Contructor, it requires a file extention
+     * DataFile constructor
+     *
+     * @param   extention   a String which represents the file extention
      * */
     public DataFile (String extention) {
         String[] aux = extention.split(".");
@@ -17,8 +19,11 @@ public class DataFile {
 
 
     /**
-     * Constuctor
+     * DataFile constuctor
      * It requires a file extention and a size
+     *
+     * @param   extention   a String which represents the file extention
+     * @param   size        a Float which represents the file size
      * */
     public DataFile (String extention, Float size) {
         String[] aux = extention.split(".");
@@ -28,7 +33,9 @@ public class DataFile {
 
 
     /**
-     * Returns the file extention
+     * File extention getter
+     *
+     * @return  the file extention
      * */
     public String getExtention () {
         return extention;
@@ -36,13 +43,17 @@ public class DataFile {
 
     /**
      * Add a size to that file extention
+     *
+     * @param   s   a Float which represents the file size
      * */
     public void addSize (Float s) {
         size += s;
     }
 
     /**
-     * Returns the file size
+     * File size getter
+     *
+     * @return  a Float which represents the file size
      * */
     public Float getSize () {
         return size;
@@ -50,13 +61,18 @@ public class DataFile {
 
     /**
      * Calculate the percentage that represents the total presence of the file with this extension
+     *
+     * @param   s       a Float which represents the file size
+     * @param   total   a Float which represents the total disk size
      * */
     public void calculatePercentage (Float s, Float total) {
         percentage = s * 100 / total;   // regla de 3, ole ole
     }
 
     /**
-     * Returns the file percentage
+     * File percentage getter
+     *
+     * @return  a Float which represents the file percentage
      * */
     public Float getPercentage () {
         return percentage;

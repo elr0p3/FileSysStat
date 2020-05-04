@@ -17,7 +17,9 @@ public class Directory {
 
     /**
      * Directory constructor
-     * Requires a path and a name for the directory
+     *
+     * @param   name    a String which represents a path or a directory's name
+     * @param   path    a Path objetc
      * */
     public Directory (String name, Path path) {
         String[] aux = name.split("/");
@@ -29,7 +31,8 @@ public class Directory {
 
     /**
      * Directory constructor
-     * Requires a String which represent a path
+     *
+     * @param   name    a String which represents a path or a directory's name
      * */
     public Directory (String path) {
         String[] aux = path.split("/");
@@ -41,35 +44,45 @@ public class Directory {
 
     
     /**
-     * Returns the directory's name
+     * Directory's name getter
+     *
+     * @return  a String which represents a directory name
      * */
     public String getName () {
         return name;
     }
 
     /**
-     * Returns the directory's path
+     * Directory's path getter
+     *
+     * @return  a Path object
      * */
     public Path getPath () {
         return path;
     }
 
     /**
-     * Returns the directory's size
+     * Directory's size getter
+     *
+     * @return  a Float which represents a directory's size
      * */
     public Float getSizeContent () {
         return size;
     }
 
     /**
-     * Returns the directories content at the directory
+     * Directories content at the directory getter
+     *
+     * @return  a Set containing Directory objects
      * */
     public Set<Directory> getDirsContent () {
         return dirs_content;
     }
 
     /**
-     * Returns the files content at the directory
+     * Files content at the directory getter
+     *
+     * @return  a Map which represent files size, key=String, value=Float
      * */
     public Map<String, Float> getFilesContent () {
         return files_content;
@@ -77,7 +90,8 @@ public class Directory {
 
     /**
      * Add to the set a directory contained by the actual one
-     * It requieres a Directory objetc
+     *
+     * @param   dir a Directory object
      * */
     public void addDirectory (Directory dir) {
         
@@ -85,7 +99,9 @@ public class Directory {
 
     /**
      * Add a 'file' into the actual directory
-     * It requires a name, a String representing a path, and its size
+     *
+     * @param   name    a String which represents a file name
+     * @param   size    a Float which represents its size
      * */
     public void addFile (String name, Float size) {
        String[] aux = name.split("/");

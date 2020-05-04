@@ -31,7 +31,9 @@ public class FileSystem {
     }
 
     /**
-     * Contructor overwritten, it requires a String which represents the path where the scan starts
+     * Contructor overwritten 
+     *
+     * @param   path    represents the path where the scan starts
      * */
     public FileSystem (String path) {
         start_path_str  = path;
@@ -45,6 +47,8 @@ public class FileSystem {
 
     /**
      * Ask for a path, usefull if the path isn't setted up at the constructor
+     *
+     * @return  String which represents the path
      * */
     public static String intoducePath () throws IOException {
         BufferedReader reader = new BufferedReader(new InputStreamReader(System.in)); 
@@ -54,28 +58,36 @@ public class FileSystem {
     }
 
     /**
-     * Returns the total number of directories scanned
+     * Directories number getter
+     *
+     * @return  total number of direcotries scanned
      * */
     public Integer getNumDirectories () {
         return directory_num;
     }
 
     /**
-     * Returns the total number of files scanned
+     * File number getter
+     *
+     * @return  total number of files scanned
      * */
     public Integer getNumFiles () {
         return file_num;
     }
 
     /**
-     * Returns the total files size scanned
+     * Used space getter
+     *
+     * @return  files size scanned
      * */
     public Float getUsedSpace () {
         return used_space;
     }
 
     /**
-     * Returns the total disk space
+     * Total space getter
+     *
+     * @return  total disk space
      * */
     public Float getTotalSpace () {
         return total_space;
@@ -136,7 +148,8 @@ public class FileSystem {
 
     /**
      * Prints the data of a specific file
-     * It requieres a path to access the file
+     *
+     * @param   path    a Path objetc
      * */
     public void printFileData (Path path) {
         printFileData(path.toString());
@@ -144,7 +157,8 @@ public class FileSystem {
 
     /**
      * Prints the data of a specific file
-     * It requires a String which represent a path, in order to access the file
+     *
+     * @param   path    a Strign which represents a path
      * */
     public void printFileData (String path) {
 
@@ -152,7 +166,8 @@ public class FileSystem {
 
     /**
      * Prints the content of a file
-     * It requires a path to access the file
+     *
+     * @param   path    a Path objetc
      * */
     public void readFile (Path path) {
         readFile(path.toString());
@@ -160,7 +175,8 @@ public class FileSystem {
 
     /**
      * Prints the content of a file
-     * It requires a String which represent a path, in order to access the file
+     *
+     * @param   path    a Strign which represents a path
      * */
     public void readFile (String path) {
 
