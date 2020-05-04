@@ -1,6 +1,6 @@
 package r0p3;
 
-public class DataFile {
+public class FileData {
 
     private String extention = "";
     private Float size;
@@ -11,7 +11,7 @@ public class DataFile {
      *
      * @param   extention   a String which represents the file extention
      * */
-    public DataFile (String extention) {
+    public FileData (String extention) {
         String[] aux = extention.split(".");
         this.extention = "." + aux[aux.length - 1];
         this.size = 0.0f;
@@ -25,7 +25,7 @@ public class DataFile {
      * @param   extention   a String which represents the file extention
      * @param   size        a Float which represents the file size
      * */
-    public DataFile (String extention, Float size) {
+    public FileData (String extention, Float size) {
         String[] aux = extention.split(".");
         this.extention = "." + aux[aux.length - 1];
         this.size = size;

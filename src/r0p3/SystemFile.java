@@ -12,7 +12,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-public class FileSystem {
+public class SystemFile {
 
     private String      root_path_str = "/";
     private String      start_path_str;
@@ -21,12 +21,12 @@ public class FileSystem {
     private Float       used_space;
     private Float       total_space;
     private Directory   dir_tree;
-    private HashMap<String, DataFile> files_info;
+    private HashMap<String, FileData> files_info;
 
     /**
      * Default constructor, will start the path to scan the file system at the root
      * */
-    public FileSystem () {
+    public SystemFile () {
         this("/");
     }
 
@@ -35,14 +35,14 @@ public class FileSystem {
      *
      * @param   path    represents the path where the scan starts
      * */
-    public FileSystem (String path) {
+    public SystemFile (String path) {
         start_path_str  = path;
         directory_num   = 0;
         file_num        = 0;
         used_space      = 0.0f;
         total_space     = 0.0f;
         dir_tree        = new Directory(path);
-        files_info      = new HashMap<String, DataFile>();
+        files_info      = new HashMap<String, FileData>();
     }
 
     /**
