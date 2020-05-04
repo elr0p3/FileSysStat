@@ -6,9 +6,8 @@ public class Main {
 
     public static void main (String [] args) throws IOException {
 
-        FileSystem fs = new FileSystem();
+        SystemFile fs = new SystemFile();
         fs.travelDirectories("./");
-
     }
-
+        
 }
