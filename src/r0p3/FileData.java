@@ -3,8 +3,9 @@ package r0p3;
 public class FileData {
 
     private String extention = "";
-    private Float size;
-    private Float percentage = 0.0f;
+    private Integer number;
+    private Double size;
+    private Double percentage = 0.0;
 
     /**
      * DataFile constructor
@@ -13,8 +14,9 @@ public class FileData {
      * */
     public FileData (String extention) {
         String[] aux = extention.split(".");
+        this.number = 1;
         this.extention = "." + aux[aux.length - 1];
-        this.size = 0.0f;
+        this.size = 0.0;
     }
 
 
@@ -23,10 +25,11 @@ public class FileData {
      * It requires a file extention and a size
      *
      * @param   extention   a String which represents the file extention
-     * @param   size        a Float which represents the file size
+     * @param   size        a Double which represents the file size
      * */
-    public FileData (String extention, Float size) {
+    public FileData (String extention, Double size) {
         String[] aux = extention.split(".");
+        this.number = 1;
         this.extention = "." + aux[aux.length - 1];
         this.size = size;
     }
@@ -41,40 +44,56 @@ public class FileData {
         return extention;
     }
 
+
+    /**
+     *
+     * */
+    public Integer getNumberOfFiles () {
+        return number;
+    }
+
+    /**
+     *
+     * */
+    public void addFileNumber (Integer n) {
+        number += n;
+    }
+
+
     /**
      * Add a size to that file extention
      *
-     * @param   s   a Float which represents the file size
+     * @param   s   a Double which represents the file size
      * */
-    public void addSize (Float s) {
+    public void addSize (Double s) {
         size += s;
     }
 
     /**
      * File size getter
      *
-     * @return  a Float which represents the file size
+     * @return  a Double which represents the file size
      * */
-    public Float getSize () {
+    public Double getSize () {
         return size;
     }
 
     /**
      * Calculate the percentage that represents the total presence of the file with this extension
      *
-     * @param   s       a Float which represents the file size
-     * @param   total   a Float which represents the total disk size
+     * @param   s       a Double which represents the file size
+     * @param   total   a Double which represents the total disk size
      * */
-    public void calculatePercentage (Float s, Float total) {
+    public void calculatePercentage (Double s, Double total) {
         percentage = s * 100 / total;   // regla de 3, ole ole
     }
 
     /**
      * File percentage getter
      *
-     * @return  a Float which represents the file percentage
+     * @return  a Double which represents the file percentage
      * */
-    public Float getPercentage () {
+    public Double getPercentage () {
         return percentage;
     }
 

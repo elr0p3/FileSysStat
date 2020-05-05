@@ -1,3 +1,14 @@
+/*  https://www.boraji.com/java-how-to-find-free-total-disk-space-in-window-or-unix
+ *  https://kodejava.org/how-do-i-get-total-space-and-free-space-of-my-disk/
+ *  https://www.geeksforgeeks.org/find-free-disk-space-using-java/
+ *  https://stackoverflow.com/questions/9477390/how-to-get-total-disk-space-in-linux-with-java
+ *  https://stackoverflow.com/questions/1051295/how-to-find-how-much-disk-space-is-left-using-java
+ *  https://www.websparrow.org/java/how-to-get-free-usable-and-total-disk-space-in-java
+ *  https://www.geeksforgeeks.org/filestore-gettotalspace-method-in-java-with-examples/
+ *
+ */
+
+
 package test;
 
 import java.io.IOException;

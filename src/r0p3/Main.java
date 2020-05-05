@@ -7,7 +7,7 @@ public class Main {
     public static void main (String [] args) throws IOException {
 
         SystemFile fs = new SystemFile();
-        fs.travelDirectories("./");
+        fs.travelDirectories("/");
     }
         
 }

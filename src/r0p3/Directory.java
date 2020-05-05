@@ -1,19 +1,27 @@
 package r0p3;
 
-import java.util.HashSet;
-import java.util.Set;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.HashMap; 
-import java.util.Map; 
 
 public class Directory {
 
     private String name = "";
     private Path path;
-    private Float size  = 0.0f;
-    private Set<Directory> dirs_content;
-    private Map<String, Float> files_content;
+    private Double size  = 0.0;
+    private ArrayList<Directory> dirs_content;
+    private HashMap<String, Double> files_content;
+
+
+    /**
+     * Directory constructor
+     *
+     * @param   name    a String which represents a path or a directory's name
+     * */
+    public Directory (String name) {
+        this(name, Paths.get(name));
+    }
 
     /**
      * Directory constructor
@@ -22,24 +30,18 @@ public class Directory {
      * @param   path    a Path objetc
      * */
     public Directory (String name, Path path) {
-        String[] aux = name.split("/");
-        this.name       = aux[aux.length - 1];
+        String root = "/";
+        if (name.equals(root)) {
+            // System.out.println("EQUALS /");
+            this.name   = name;
+        } else {
+            // System.out.println("NOT EQUALS /");
+            String[] aux = name.split("/");
+            this.name   = aux[aux.length - 1];
+        }
         this.path       = path;
-        dirs_content    = new HashSet<Directory>();
-        files_content   = new HashMap<String, Float>();
-    }
-
-    /**
-     * Directory constructor
-     *
-     * @param   name    a String which represents a path or a directory's name
-     * */
-    public Directory (String path) {
-        String[] aux = path.split("/");
-        this.name       = aux[aux.length - 1];
-        this.path       = Paths.get(path);
-        dirs_content    = new HashSet<Directory>();
-        files_content   = new HashMap<String, Float>();
+        dirs_content    = new ArrayList<Directory>();
+        files_content   = new HashMap<String, Double>();
     }
 
     
@@ -64,9 +66,9 @@ public class Directory {
     /**
      * Directory's size getter
      *
-     * @return  a Float which represents a directory's size
+     * @return  a Double which represents a directory's size
      * */
-    public Float getSizeContent () {
+    public Double getSizeContent () {
         return size;
     }
 
@@ -75,17 +77,24 @@ public class Directory {
      *
      * @return  a Set containing Directory objects
      * */
-    public Set<Directory> getDirsContent () {
+    public ArrayList<Directory> getDirsContent () {
         return dirs_content;
     }
 
     /**
      * Files content at the directory getter
      *
-     * @return  a Map which represent files size, key=String, value=Float
+     * @return  a Map which represent files size, key=String, value=Double
      * */
-    public Map<String, Float> getFilesContent () {
+    public HashMap<String, Double> getFilesContent () {
         return files_content;
+    }
+
+    /**
+     *
+     * */
+    public void addSize (Double s) {
+        size += s;
     }
 
     /**
@@ -94,16 +103,16 @@ public class Directory {
      * @param   dir a Directory object
      * */
     public void addDirectory (Directory dir) {
-        
+        dirs_content.add(dir);
     }
 
     /**
      * Add a 'file' into the actual directory
      *
      * @param   name    a String which represents a file name
-     * @param   size    a Float which represents its size
+     * @param   size    a Double which represents its size
      * */
-    public void addFile (String name, Float size) {
+    public void addFile (String name, Double size) {
        String[] aux = name.split("/");
 
     }

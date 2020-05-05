@@ -8,6 +8,9 @@ import java.io.IOException;
 import java.io.InputStreamReader; 
 
 import java.io.IOException;
+import java.nio.file.AccessDeniedException;
+import java.nio.file.DirectoryIteratorException;
+import java.nio.file.FileSystemException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -18,10 +21,10 @@ public class SystemFile {
     private String      start_path_str;
     private Integer     directory_num;
     private Integer     file_num;
-    private Float       used_space;
-    private Float       total_space;
+    private Double      used_space;
+    private Double      total_space;
     private Directory   dir_tree;
-    private HashMap<String, FileData> files_info;
+    private HashMap<String, FileData> files_data;
 
     /**
      * Default constructor, will start the path to scan the file system at the root
@@ -41,8 +44,8 @@ public class SystemFile {
         file_num        = 0;
         used_space      = 0.0f;
         total_space     = 0.0f;
-        dir_tree        = new Directory(path);
-        files_info      = new HashMap<String, FileData>();
+        // dir_tree        = new Directory(path);
+        files_data      = new HashMap<String, FileData>();
     }
 
     /**
@@ -80,7 +83,7 @@ public class SystemFile {
      *
      * @return  files size scanned
      * */
-    public Float getUsedSpace () {
+    public Double getUsedSpace () {
         return used_space;
     }
 
@@ -89,7 +92,7 @@ public class SystemFile {
      *
      * @return  total disk space
      * */
-    public Float getTotalSpace () {
+    public Double getTotalSpace () {
         return total_space;
     }
 
@@ -104,31 +107,80 @@ public class SystemFile {
 
     /**
      * Allows you to loop through the file system recursively
-     * It requires a String which represent the path to start scanning
+     *
+     * @param   path    a String which represent the path to start scanning
      * */
     public void travelDirectories (String path) throws IOException {
-        Path root = Paths.get( path );
-        Iterable<Path> list = Files.newDirectoryStream(root);
+        // OJO CUIDAO CON ESTOS ERRORES
+        // java.nio.file.AccessDeniedException      -> Archivo de superusuario
+        // System.err.println("error at " + f.toRealPath().toString() + ":\nyou cannot perform this operation unless you are root.");
+        // java.nio.file.DirectoryIteratorException -> 
+        // java.nio.file.FileSystemException        -> Archivo corrupto
 
-        if (list == null) return;
-
-        for (Path f : list) {
-            if (Files.isSymbolicLink(f)) {
-                System.out.println( "Sym:" + f.toRealPath() );
-            } else if ( Files.isDirectory(f) ) {
-                System.out.println( "Dir:" + f.toRealPath() );
-                travelDirectories( f.toAbsolutePath().toString() );
-            } else {
-                System.out.println( "File:" + f.toRealPath() );
-            }
-        }
+        used_space = walk(Paths.get(path), dir_tree, files_data);
+        /*
+         * CACLULATE FILE PERCENTAGE
+         */
     }
 
     /**
      * There is where all the magic of visiting directories happens
      * */
-    private void walk () {
+    private Double walk (Path path, Directory dir, HashMap<String, FileData> files_data) throws IOException {
+        Path root = path;
+        Iterable<Path> list = Files.newDirectoryStream(root);
+        Double size = 0.0;
 
+        if (list == null) return 0.0;
+
+        for (Path f : list) {
+            try {
+                if (Files.isSymbolicLink(f)) {
+                    System.out.println( "Sym:" + f.toRealPath() );
+                    size += scanFile(f, dir, files_data);
+                } else if ( Files.isDirectory(f) ) {
+                    Directory next_dir = new Directory(f.toRealPath().toString());
+                    System.out.println( "Dir:" + f.toRealPath() );
+                    dir.addDirectory(next_dir);
+                    size += walk(f, next_dir, files_data);
+                } else {
+                    System.out.println( "File:" + f.toRealPath() );
+                    size += scanFile(f, dir, files_data);
+                }
+
+            } catch (AccessDeniedException e) {
+                System.err.println("AccessDeniedException: " + e.getMessage());
+            } catch (DirectoryIteratorException e) {
+                System.err.println("DirectoryIteratorException: " + e.getMessage());
+            } catch (FileSystemException e) {
+                System.err.println("FileSystemException: " + e.getMessage());
+            }
+        }
+        dir.addSize(size);
+        return size;
+    }
+
+    /**
+     *
+     * */
+    private Double scanFile (Path f, Directory dir, HashMap<String, FileData> files_data) {
+        Double size = new Double(Files.size(f));
+        String file_name   = f.getFileName().toString();
+        String[] extention = file_name.split(".");
+        String real_extnt  = "";
+        if (extention.length > 1)
+            real_extnt = extention[extention.length - 1];
+        if (files_data.containsKey(real_extnt)) {
+            FileData aux = files_data.get(real_extnt);
+            aux.addSize(aux.getSize() + size);
+            aux.addFileNumber(1);
+            files_data.put(real_extnt, aux);
+        } else
+            files_data.put(real_extnt, new FileData(real_extnt, size));
+        
+        dir.getFilesContent().put(file_name, size);
+
+        return size;
     }
 
     /**
