@@ -4,14 +4,15 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap; 
+import java.util.Map;
 
 public class Directory {
 
     private String name = "";
     private Path path;
-    private Double size  = 0.0;
+    private Long size  = (long)0;
     private ArrayList<Directory> dirs_content;
-    private HashMap<String, Double> files_content;
+    private Map<String, Long> files_content;
 
 
     /**
@@ -41,7 +42,7 @@ public class Directory {
         }
         this.path       = path;
         dirs_content    = new ArrayList<Directory>();
-        files_content   = new HashMap<String, Double>();
+        files_content   = new HashMap<String, Long>();
     }
 
     
@@ -66,9 +67,9 @@ public class Directory {
     /**
      * Directory's size getter
      *
-     * @return  a Double which represents a directory's size
+     * @return  a Long which represents a directory's size
      * */
-    public Double getSizeContent () {
+    public Long getSizeContent () {
         return size;
     }
 
@@ -84,16 +85,16 @@ public class Directory {
     /**
      * Files content at the directory getter
      *
-     * @return  a Map which represent files size, key=String, value=Double
+     * @return  a Map which represent files size, key=String, value=Long
      * */
-    public HashMap<String, Double> getFilesContent () {
+    public Map<String, Long> getFilesContent () {
         return files_content;
     }
 
     /**
      *
      * */
-    public void addSize (Double s) {
+    public void addSize (Long s) {
         size += s;
     }
 
@@ -110,10 +111,12 @@ public class Directory {
      * Add a 'file' into the actual directory
      *
      * @param   name    a String which represents a file name
-     * @param   size    a Double which represents its size
+     * @param   size    a Long which represents its size
      * */
-    public void addFile (String name, Double size) {
-       String[] aux = name.split("/");
+    public void addFile (String name, Long size) {
+        this.files_content.put(name, size);
+        // this.name = name;
+        // this.size = size;
 
     }
 

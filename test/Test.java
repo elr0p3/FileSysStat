@@ -48,7 +48,7 @@ public class Test {
             System.out.print("\n\n" + root + ": ");
             try {
                 FileStore store = Files.getFileStore(root);
-                System.out.println("available =" + store.getUsableSpace() / (1024 * 1024 * 1204f)
+                System.out.println("\navailable =" + store.getUsableSpace() / (1024 * 1024 * 1204f)
                                 + "\ntotal =" + store.getTotalSpace() / (1024 * 1024 * 1204f)
                                 + "\nunalocated = " + store.getUnallocatedSpace() / (1024 * 1024 * 1204f));
             } catch (IOException e) {

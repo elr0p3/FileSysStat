@@ -1,8 +1,7 @@
 package r0p3;
 
 import java.util.HashMap; 
-// import java.util.Map; 
-
+import java.util.Map;
 import java.io.BufferedReader; 
 import java.io.IOException; 
 import java.io.InputStreamReader; 
@@ -10,26 +9,28 @@ import java.io.InputStreamReader;
 import java.io.IOException;
 import java.nio.file.AccessDeniedException;
 import java.nio.file.DirectoryIteratorException;
+import java.nio.file.FileStore;
 import java.nio.file.FileSystemException;
+import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
 public class SystemFile {
 
-    private String      root_path_str = "/";
     private String      start_path_str;
     private Integer     directory_num;
     private Integer     file_num;
-    private Double      used_space;
-    private Double      total_space;
+    private Long        used_space;
+    private Long        total_space;
+    private Long        scanned_space;
     private Directory   dir_tree;
-    private HashMap<String, FileData> files_data;
+    private Map<String, FileData> files_data;
 
     /**
      * Default constructor, will start the path to scan the file system at the root
      * */
-    public SystemFile () {
+    public SystemFile () throws IOException {
         this("/");
     }
 
@@ -38,14 +39,22 @@ public class SystemFile {
      *
      * @param   path    represents the path where the scan starts
      * */
-    public SystemFile (String path) {
+    public SystemFile (String path) throws IOException {
         start_path_str  = path;
         directory_num   = 0;
         file_num        = 0;
-        used_space      = 0.0f;
-        total_space     = 0.0f;
-        // dir_tree        = new Directory(path);
+        used_space      = (long)0;
+        total_space     = (long)0;
+        scanned_space   = (long)0;
         files_data      = new HashMap<String, FileData>();
+        // dir_tree        = new Directory(path);
+        
+   		Iterable<Path> roots = FileSystems.getDefault().getRootDirectories();
+        for (Path p : roots) {
+            FileStore fs = Files.getFileStore(p);
+            total_space += fs.getTotalSpace();
+            used_space  += (fs.getTotalSpace() - fs.getUsableSpace());
+        }
     }
 
     /**
@@ -83,7 +92,7 @@ public class SystemFile {
      *
      * @return  files size scanned
      * */
-    public Double getUsedSpace () {
+    public Long getUsedSpace () {
         return used_space;
     }
 
@@ -92,8 +101,17 @@ public class SystemFile {
      *
      * @return  total disk space
      * */
-    public Double getTotalSpace () {
+    public Long getTotalSpace () {
         return total_space;
+    }
+
+    /**
+     * Scanned space getter
+     *
+     * @return  scanned space from the path
+     * */
+    public Long getScannedSpace () {
+        return scanned_space;
     }
 
 
@@ -117,7 +135,10 @@ public class SystemFile {
         // java.nio.file.DirectoryIteratorException -> 
         // java.nio.file.FileSystemException        -> Archivo corrupto
 
-        used_space = walk(Paths.get(path), dir_tree, files_data);
+        start_path_str = path;
+        dir_tree = new Directory(start_path_str);
+        directory_num++;
+        scanned_space = walk(Paths.get(path), dir_tree, files_data);
         /*
          * CACLULATE FILE PERCENTAGE
          */
@@ -126,34 +147,38 @@ public class SystemFile {
     /**
      * There is where all the magic of visiting directories happens
      * */
-    private Double walk (Path path, Directory dir, HashMap<String, FileData> files_data) throws IOException {
+    private Long walk (Path path, Directory dir, Map<String, FileData> files_data) throws IOException {
         Path root = path;
         Iterable<Path> list = Files.newDirectoryStream(root);
-        Double size = 0.0;
+        Long size = (long)0;
 
-        if (list == null) return 0.0;
+        if (list == null) return (long)0;
 
         for (Path f : list) {
             try {
-                if (Files.isSymbolicLink(f)) {
+
+                if (Files.isSymbolicLink(f)) {          // Encontrado enlace simbolico
                     System.out.println( "Sym:" + f.toRealPath() );
                     size += scanFile(f, dir, files_data);
-                } else if ( Files.isDirectory(f) ) {
-                    Directory next_dir = new Directory(f.toRealPath().toString());
+                    file_num++;
+                } else if ( Files.isDirectory(f) ) {    // Encontrado directorio
                     System.out.println( "Dir:" + f.toRealPath() );
+                    Directory next_dir = new Directory(f.toRealPath().toString());
                     dir.addDirectory(next_dir);
                     size += walk(f, next_dir, files_data);
-                } else {
+                    directory_num++;
+                } else {                                // Encontrado arhivo de texto
                     System.out.println( "File:" + f.toRealPath() );
                     size += scanFile(f, dir, files_data);
+                    file_num++;
                 }
 
             } catch (AccessDeniedException e) {
-                System.err.println("AccessDeniedException: " + e.getMessage());
+                System.err.println("AccessDeniedException:      " + e.getMessage());
             } catch (DirectoryIteratorException e) {
                 System.err.println("DirectoryIteratorException: " + e.getMessage());
             } catch (FileSystemException e) {
-                System.err.println("FileSystemException: " + e.getMessage());
+                System.err.println("FileSystemException:        " + e.getMessage());
             }
         }
         dir.addSize(size);
@@ -161,10 +186,10 @@ public class SystemFile {
     }
 
     /**
-     *
+     * Helps walk() function to get the size of a file and store some files data
      * */
-    private Double scanFile (Path f, Directory dir, HashMap<String, FileData> files_data) {
-        Double size = new Double(Files.size(f));
+    private Long scanFile (Path f, Directory dir, Map<String, FileData> files_data) throws IOException {
+        Long size = (long)Files.size(f);
         String file_name   = f.getFileName().toString();
         String[] extention = file_name.split(".");
         String real_extnt  = "";
@@ -178,7 +203,8 @@ public class SystemFile {
         } else
             files_data.put(real_extnt, new FileData(real_extnt, size));
         
-        dir.getFilesContent().put(file_name, size);
+        // dir.getFilesContent().put(file_name, size);
+        dir.addFile(file_name, size);
 
         return size;
     }
@@ -187,7 +213,24 @@ public class SystemFile {
      * Prints all the file system scanned
      * */
     public void printFileSystem () {
+        printFileSystemStyle(dir_tree, ""); 
+    }
 
+    /**
+     * Prints the file system scanned
+     *
+     * @param   dir a Directory object
+     * @param   t   a tab, just to make indentations
+     * */
+    private void printFileSystemStyle (Directory dir, String t) {
+        String tab = "\t" + t;
+        System.out.println(t + dir.getPath().toString() + " --> " + dir.getSizeContent());
+        for (Map.Entry<String, Long> iterator : dir.getFilesContent().entrySet()) {
+           System.out.println(tab + iterator.getKey() + " --> " + iterator.getValue());
+        }
+        for (Directory next_dir : dir.getDirsContent()){
+            printFileSystemStyle(next_dir, tab);
+        }
     }
 
     /**
