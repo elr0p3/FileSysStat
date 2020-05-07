@@ -3,10 +3,10 @@
 all : get_class
 
 get_class :
-	javac src/r0p3/*.java
+	javac src/r0p3/*.java -d ./bin
 
 run :
-	java -classpath ./src/ r0p3.Main
+	java -classpath ./bin/ r0p3.Main
 
 clean :
-	rm src/r0p3/*.class
+	rm ./bin/r0p3/*.class
