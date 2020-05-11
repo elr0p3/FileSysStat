@@ -2,10 +2,10 @@ package r0p3;
 
 public class FileData {
 
-    private String extention = "";
-    private Integer number;
-    private Long size;
-    private Long percentage = (long)0;
+    private String  extention = "";
+    private Long    number;
+    private Long    size;
+    private Float   percentage = 0f;
 
     /**
      * DataFile constructor
@@ -13,10 +13,7 @@ public class FileData {
      * @param   extention   a String which represents the file extention
      * */
     public FileData (String extention) {
-        String[] aux = extention.split(".");
-        this.number = 1;
-        this.extention = "." + aux[aux.length - 1];
-        this.size = (long)0;
+        this(extention, 0L);
     }
 
 
@@ -29,8 +26,11 @@ public class FileData {
      * */
     public FileData (String extention, Long size) {
         String[] aux = extention.split(".");
-        this.number = 1;
-        this.extention = "." + aux[aux.length - 1];
+        if (aux.length != 0)
+            this.extention = aux[aux.length - 1];
+        else
+            this.extention = extention;
+        this.number = 1L;
         this.size = size;
     }
 
@@ -50,7 +50,7 @@ public class FileData {
      *
      * @return  number of files scanned
      * */
-    public Integer getNumberOfFiles () {
+    public Long getNumberOfFiles () {
         return number;
     }
 
@@ -89,8 +89,8 @@ public class FileData {
      * @param   s       a Long which represents the file size
      * @param   total   a Long which represents the total disk size
      * */
-    public void calculatePercentage (Long s, Long total) {
-        percentage = s * 100 / total;   // regla de 3, ole ole
+    public void calculateTotalSizePercentage (Long s, Long total) {
+        percentage = (float)s * 100 / total;   // regla de 3, ole ole
     }
 
     /**
@@ -98,7 +98,7 @@ public class FileData {
      *
      * @return  a Long which represents the file percentage
      * */
-    public Long getPercentage () {
+    public Float getPercentage () {
         return percentage;
     }
 

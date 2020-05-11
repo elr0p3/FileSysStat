@@ -1,6 +1,9 @@
 package r0p3;
 
-import java.util.HashMap; 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.io.BufferedReader; 
 import java.io.IOException; 
@@ -19,8 +22,9 @@ import java.nio.file.Paths;
 public class SystemFile {
 
     private String      start_path_str;
-    private Integer     directory_num;
-    private Integer     file_num;
+    private Long        directory_num;
+    private Long        file_num;
+    private Long        link_num;
     private Long        used_space;
     private Long        total_space;
     private Long        scanned_space;
@@ -41,8 +45,9 @@ public class SystemFile {
      * */
     public SystemFile (String path) throws IOException {
         start_path_str  = path;
-        directory_num   = 0;
-        file_num        = 0;
+        directory_num   = 0L;
+        file_num        = 0L;
+        link_num        = 0L;
         used_space      = (long)0;
         total_space     = (long)0;
         scanned_space   = (long)0;
@@ -74,7 +79,7 @@ public class SystemFile {
      *
      * @return  total number of direcotries scanned
      * */
-    public Integer getNumDirectories () {
+    public Long getNumDirectories () {
         return directory_num;
     }
 
@@ -83,8 +88,15 @@ public class SystemFile {
      *
      * @return  total number of files scanned
      * */
-    public Integer getNumFiles () {
+    public Long getNumFiles () {
         return file_num;
+    }
+
+    /**
+     *
+     * */
+    public Long getLinks () {
+        return link_num;
     }
 
     /**
@@ -119,8 +131,8 @@ public class SystemFile {
      * Allows you to loop through the file system recursively
      * It doesn't requires a String which represent the path, so it'll take the default start path
      * */
-    public void travelDirectories () throws IOException {
-        travelDirectories(start_path_str);
+    public void travelDirectories (boolean enable_print) throws IOException {
+        travelDirectories(start_path_str, enable_print);
     }
 
     /**
@@ -128,7 +140,7 @@ public class SystemFile {
      *
      * @param   path    a String which represent the path to start scanning
      * */
-    public void travelDirectories (String path) throws IOException {
+    public void travelDirectories (String path, boolean enable_print) throws IOException {
         // OJO CUIDAO CON ESTOS ERRORES
         // java.nio.file.AccessDeniedException      -> Archivo de superusuario
         // System.err.println("error at " + f.toRealPath().toString() + ":\nyou cannot perform this operation unless you are root.");
@@ -138,16 +150,20 @@ public class SystemFile {
         start_path_str = path;
         dir_tree = new Directory(start_path_str);
         directory_num++;
-        scanned_space = walk(Paths.get(path), dir_tree, files_data);
+        scanned_space = walk(Paths.get(path), dir_tree, files_data, enable_print);
         /*
          * CACLULATE FILE PERCENTAGE
          */
+        for (Map.Entry<String, FileData> entry : files_data.entrySet()) {
+            Long size_f = entry.getValue().getSize();
+            entry.getValue().calculateTotalSizePercentage(size_f, this.scanned_space);
+        }
     }
 
     /**
      * There is where all the magic of visiting directories happens
      * */
-    private Long walk (Path path, Directory dir, Map<String, FileData> files_data) throws IOException {
+    private Long walk (Path path, Directory dir, Map<String, FileData> files_data, boolean enable_print) throws IOException {
         Path root = path;
         Iterable<Path> list = Files.newDirectoryStream(root);
         Long size = (long)0;
@@ -158,17 +174,19 @@ public class SystemFile {
             try {
 
                 if (Files.isSymbolicLink(f)) {          // Encontrado enlace simbolico
-                    System.out.println( "Sym:" + f.toRealPath() );
-                    size += scanFile(f, dir, files_data);
-                    file_num++;
+                    if (enable_print)
+                        System.out.println( "Sym:" + f.toRealPath() );
+                    link_num++;
                 } else if ( Files.isDirectory(f) ) {    // Encontrado directorio
-                    System.out.println( "Dir:" + f.toRealPath() );
+                    if (enable_print)
+                        System.out.println( "Dir:" + f.toRealPath() );
                     Directory next_dir = new Directory(f.toRealPath().toString());
                     dir.addDirectory(next_dir);
-                    size += walk(f, next_dir, files_data);
+                    size += walk(f, next_dir, files_data, enable_print);
                     directory_num++;
                 } else {                                // Encontrado arhivo de texto
-                    System.out.println( "File:" + f.toRealPath() );
+                    if (enable_print)
+                        System.out.println( "File:" + f.toRealPath() );
                     size += scanFile(f, dir, files_data);
                     file_num++;
                 }
@@ -191,13 +209,18 @@ public class SystemFile {
     private Long scanFile (Path f, Directory dir, Map<String, FileData> files_data) throws IOException {
         Long size = (long)Files.size(f);
         String file_name   = f.getFileName().toString();
-        String[] extention = file_name.split(".");
+        if (file_name.charAt(0) == '.') {
+        	StringBuilder sb = new StringBuilder(file_name);
+        	sb.deleteCharAt(0);
+        	file_name = sb.toString();
+        }
+        String[] extention = file_name.split("\\.");
         String real_extnt  = "";
         if (extention.length > 1)
             real_extnt = extention[extention.length - 1];
         if (files_data.containsKey(real_extnt)) {
             FileData aux = files_data.get(real_extnt);
-            aux.addSize(aux.getSize() + size);
+            aux.addSize(size);
             aux.addFileNumber(1);
             files_data.put(real_extnt, aux);
         } else
@@ -231,6 +254,72 @@ public class SystemFile {
         for (Directory next_dir : dir.getDirsContent()){
             printFileSystemStyle(next_dir, tab);
         }
+    }
+
+    /**
+     *
+     * */
+    public void printFileData () {
+        System.out.println("\n");
+        System.out.println("Total space: " + getTotalSpace() + "B");
+        System.out.println("Used space:  " + getUsedSpace() + "B");
+        System.out.println("Dir num:     " + getNumDirectories());
+        System.out.println("File num:    " + getNumFiles());
+        System.out.println("Link num:    " + getLinks());
+        System.out.println();
+
+        System.out.format("%-15s|%-15s|%-15s|%-15s\n", "Extention", "Percentage", "Number of files", "Size");
+        printLine();
+        // for (Map.Entry<String, FileData> entry : files_data.entrySet()) {
+            // String exten = entry.getKey();
+            // Float percntg = entry.getValue().getPercentage();
+            // Long nm = entry.getValue().getNumberOfFiles();
+            // Long sz = entry.getValue().getSize();
+            // System.out.format("%-15s|%-15f|%-15d|%-15d\n", exten, percntg, nm, sz);
+            // printLine();
+        // }
+        for (FileData f : sortFiles()) {
+            System.out.format("%-15s|%-15f|%-15d|%-15d\n", f.getExtention(), f.getPercentage(), f.getNumberOfFiles(), f.getSize());
+            printLine();
+        }
+    }
+
+    /**
+     *
+     * */
+    private List<FileData> sortFiles () {
+        // Perdon por hacer esto, pero es lo que se me ocurre mas rapido
+        // si en el futuro se me ocurre otra cosa ya lo hare
+
+        ArrayList<Long> sizes = new ArrayList<Long>();
+
+        for (FileData f : files_data.values())
+            sizes.add(f.getSize());
+
+        Collections.sort(sizes, Collections.reverseOrder());
+
+        // Map<String, FileData> aux = new HashMap<String, FileData>();
+        List<FileData> aux = new ArrayList<>();
+
+        for (Long size : sizes) {
+            for (Map.Entry<String, FileData> entry : files_data.entrySet()) {
+                if (entry.getValue().getSize() == size && !aux.contains(entry.getValue())){
+                    aux.add(entry.getValue());
+                    break;
+                }
+            }
+        }
+        return aux;
+    }
+
+    private void printLine () {
+        for (int i = 0; i < 60; i++) {
+            if ((i+1) % 16 == 0)
+                System.out.print("+");
+            else
+                System.out.print("-");
+        }
+        System.out.println();
     }
 
     /**
