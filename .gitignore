@@ -26,3 +26,5 @@ hs_err_pid*
 # Test files
 dnwld
 *.test
+*.py
+*.data

@@ -84,6 +84,34 @@ public class FileData {
     }
 
     /**
+     *
+     * */
+    public String getSizeUnit () {
+        Float value = 0f;
+
+        if (size < 1024)
+            return size.toString() + " B";
+        
+        value = size / 1024f;
+        if (value < 1024)
+            return value.toString() + " KB";
+
+        value = value / 1024f;
+        if (value < 1024)
+            return value.toString() + " MB";
+
+        value = value / 1024f;
+        if (value < 1024)
+            return value.toString() + " GB";
+
+        value = value / 1024f;
+        if (value < 1024)
+            return value.toString() + " TB";
+
+        return size.toString() + " B";
+    }
+
+    /**
      * Calculate the percentage that represents the total presence of the file with this extension
      *
      * @param   s       a Long which represents the file size

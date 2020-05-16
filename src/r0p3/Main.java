@@ -7,12 +7,12 @@ public class Main {
     public static void main (String [] args) throws IOException {
 
         SystemFile fs = new SystemFile();
-        fs.travelDirectories("/", false);
+        fs.travelDirectories("/home", false);
         System.out.println();
         // fs.printFileSystem();
 
         System.out.println();
-        fs.printFileData();
+        fs.printFileData(10);
     }
         
 }

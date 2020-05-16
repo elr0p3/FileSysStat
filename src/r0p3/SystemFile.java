@@ -3,9 +3,12 @@ package r0p3;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.io.BufferedReader; 
+import java.util.Set;
+import java.io.BufferedReader;
+import java.io.FileWriter;
 import java.io.IOException; 
 import java.io.InputStreamReader; 
 
@@ -30,6 +33,12 @@ public class SystemFile {
     private Long        scanned_space;
     private Directory   dir_tree;
     private Map<String, FileData> files_data;
+
+    private Integer MAX_SPACE_PRINT = 0;
+
+    // rutas en las que hay problemas
+    // /proc/kcore -> representa la memoria RAM del sistema, tiene un tamaño de 128TB en sistemas de 64bits
+    private final Set<String> DANGER_ZONE = new HashSet<String>();
 
     /**
      * Default constructor, will start the path to scan the file system at the root
@@ -60,6 +69,12 @@ public class SystemFile {
             total_space += fs.getTotalSpace();
             used_space  += (fs.getTotalSpace() - fs.getUsableSpace());
         }
+
+        // https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/4/html/reference_guide/s2-proc-kcore
+        // https://stackoverflow.com/questions/21170795/proc-kcore-file-is-huge
+        // https://www.tldp.org/LDP/Linux-Filesystem-Hierarchy/html/proc.html
+        DANGER_ZONE.add("/proc/kcore");
+        DANGER_ZONE.add("/var/lib/dhcpcd/proc/kcore");
     }
 
     /**
@@ -177,17 +192,18 @@ public class SystemFile {
                     if (enable_print)
                         System.out.println( "Sym:" + f.toRealPath() );
                     link_num++;
-                } else if ( Files.isDirectory(f) ) {    // Encontrado directorio
+                } else if (Files.isDirectory(f)) {      // Encontrado directorio
                     if (enable_print)
                         System.out.println( "Dir:" + f.toRealPath() );
                     Directory next_dir = new Directory(f.toRealPath().toString());
                     dir.addDirectory(next_dir);
                     size += walk(f, next_dir, files_data, enable_print);
                     directory_num++;
-                } else {                                // Encontrado arhivo de texto
+                } else if (Files.isRegularFile(f) && Files.size(f) > 0) {    // Encontrado arhivo de texto
                     if (enable_print)
                         System.out.println( "File:" + f.toRealPath() );
-                    size += scanFile(f, dir, files_data);
+                    if (!DANGER_ZONE.contains(f.toRealPath().toString()))
+                        size += scanFile(f, dir, files_data);
                     file_num++;
                 }
 
@@ -214,10 +230,18 @@ public class SystemFile {
         	sb.deleteCharAt(0);
         	file_name = sb.toString();
         }
+        // if (!file_name.contains(".")) {	
+            // FileWriter file = new FileWriter("./info/total.data", true);
+            // file.append(f.toString() + "\n");
+            // file.close();        	
+        // }
         String[] extention = file_name.split("\\.");
         String real_extnt  = "";
-        if (extention.length > 1)
+        if (extention.length > 1) {
             real_extnt = extention[extention.length - 1];
+            if (real_extnt.length() > MAX_SPACE_PRINT)
+                MAX_SPACE_PRINT = real_extnt.length();
+        }
         if (files_data.containsKey(real_extnt)) {
             FileData aux = files_data.get(real_extnt);
             aux.addSize(size);
@@ -259,16 +283,18 @@ public class SystemFile {
     /**
      *
      * */
-    public void printFileData () {
+    public void printFileData (Integer limit) {
         System.out.println("\n");
-        System.out.println("Total space: " + getTotalSpace() + "B");
-        System.out.println("Used space:  " + getUsedSpace() + "B");
+        System.out.println("Total space: " + getTotalSpace() + " B" + " -> " + getTotalSpace()/(1024*1024*1024f));
+        System.out.println("Used space:  " + getUsedSpace() + " B" + " -> " + getUsedSpace()/(1024*1024*1024f));
+        System.out.println("Scan space:  " + getScannedSpace() + " B" + " -> " + getScannedSpace()/(1024*1024*1024f));
         System.out.println("Dir num:     " + getNumDirectories());
         System.out.println("File num:    " + getNumFiles());
         System.out.println("Link num:    " + getLinks());
         System.out.println();
 
-        System.out.format("%-15s|%-15s|%-15s|%-15s\n", "Extention", "Percentage", "Number of files", "Size");
+        String formatTitle = "%-" + MAX_SPACE_PRINT.toString() + "s|%-15s|%-15s|%-15s\n";
+        System.out.format(formatTitle, "Extention", "Percentage (%)", "Number of files", "Size");
         printLine();
         // for (Map.Entry<String, FileData> entry : files_data.entrySet()) {
             // String exten = entry.getKey();
@@ -278,9 +304,14 @@ public class SystemFile {
             // System.out.format("%-15s|%-15f|%-15d|%-15d\n", exten, percntg, nm, sz);
             // printLine();
         // }
+        int i = 0;
         for (FileData f : sortFiles()) {
-            System.out.format("%-15s|%-15f|%-15d|%-15d\n", f.getExtention(), f.getPercentage(), f.getNumberOfFiles(), f.getSize());
+            if (i == limit)
+                break;
+            String formatData = "%-" + MAX_SPACE_PRINT.toString() + "s|%-15f|%-15d|%-15s\n";
+            System.out.format(formatData, f.getExtention(), f.getPercentage(), f.getNumberOfFiles(), f.getSizeUnit());
             printLine();
+            i++;
         }
     }
 
@@ -313,8 +344,10 @@ public class SystemFile {
     }
 
     private void printLine () {
-        for (int i = 0; i < 60; i++) {
-            if ((i+1) % 16 == 0)
+        for (int i = 0; i < MAX_SPACE_PRINT; i++)
+            System.out.print("-");
+        for (int i = 0; i < 45; i++) {
+            if (i % 16 == 0)
                 System.out.print("+");
             else
                 System.out.print("-");
