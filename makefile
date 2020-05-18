@@ -10,3 +10,13 @@ run :
 
 clean :
 	rm ./bin/r0p3/*.class
+
+
+gui :
+	javac -classpath ./src/  src/**/*.java -d ./build
+
+grun :
+	java -classpath ./build/ r0p3GUI.Main
+
+gclean :
+	rm ./bin/r0p3GUI/*.class

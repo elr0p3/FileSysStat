@@ -1,5 +1,8 @@
 package r0p3;
 
+import java.math.RoundingMode;
+import java.text.DecimalFormat;
+
 public class FileData {
 
     private String  extention = "";
@@ -87,12 +90,16 @@ public class FileData {
      *
      * */
     public String getSizeUnit () {
+        return getSizeUnit(this.size);
+    }
+
+    public static String getSizeUnit (Long sz) {
         Float value = 0f;
 
-        if (size < 1024)
-            return size.toString() + " B";
+        if (sz < 1024)
+            return sz.toString() + " B";
         
-        value = size / 1024f;
+        value = sz / 1024f;
         if (value < 1024)
             return value.toString() + " KB";
 
@@ -108,7 +115,7 @@ public class FileData {
         if (value < 1024)
             return value.toString() + " TB";
 
-        return size.toString() + " B";
+        return sz.toString() + " B";
     }
 
     /**
@@ -128,6 +135,13 @@ public class FileData {
      * */
     public Float getPercentage () {
         return percentage;
+    }
+
+    public String getPercentageFormat () {
+        DecimalFormat df = new DecimalFormat("#.###");
+        df.setRoundingMode(RoundingMode.CEILING);
+
+        return df.format(this.percentage);
     }
 
 }

@@ -142,6 +142,11 @@ public class SystemFile {
     }
 
 
+    public Map<String, FileData> getFileData () {
+        return files_data;
+    }
+
+
     /**
      * Allows you to loop through the file system recursively
      * It doesn't requires a String which represent the path, so it'll take the default start path
@@ -192,6 +197,8 @@ public class SystemFile {
                     if (enable_print)
                         System.out.println( "Sym:" + f.toRealPath() );
                     link_num++;
+                    dir.addSymLink(f.toRealPath().toString());
+                    dir.addSymLink(1);
                 } else if (Files.isDirectory(f)) {      // Encontrado directorio
                     if (enable_print)
                         System.out.println( "Dir:" + f.toRealPath() );
@@ -199,12 +206,14 @@ public class SystemFile {
                     dir.addDirectory(next_dir);
                     size += walk(f, next_dir, files_data, enable_print);
                     directory_num++;
+                    dir.addSubDir(1);
                 } else if (Files.isRegularFile(f) && Files.size(f) > 0) {    // Encontrado arhivo de texto
                     if (enable_print)
                         System.out.println( "File:" + f.toRealPath() );
                     if (!DANGER_ZONE.contains(f.toRealPath().toString()))
                         size += scanFile(f, dir, files_data);
                     file_num++;
+                    dir.addFile(1);
                 }
 
             } catch (AccessDeniedException e) {
@@ -296,14 +305,6 @@ public class SystemFile {
         String formatTitle = "%-" + MAX_SPACE_PRINT.toString() + "s|%-15s|%-15s|%-15s\n";
         System.out.format(formatTitle, "Extention", "Percentage (%)", "Number of files", "Size");
         printLine();
-        // for (Map.Entry<String, FileData> entry : files_data.entrySet()) {
-            // String exten = entry.getKey();
-            // Float percntg = entry.getValue().getPercentage();
-            // Long nm = entry.getValue().getNumberOfFiles();
-            // Long sz = entry.getValue().getSize();
-            // System.out.format("%-15s|%-15f|%-15d|%-15d\n", exten, percntg, nm, sz);
-            // printLine();
-        // }
         int i = 0;
         for (FileData f : sortFiles()) {
             if (i == limit)

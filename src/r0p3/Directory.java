@@ -3,8 +3,10 @@ package r0p3;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.HashMap; 
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 public class Directory {
 
@@ -13,6 +15,12 @@ public class Directory {
     private Long size  = (long)0;
     private ArrayList<Directory> dirs_content;
     private Map<String, Long> files_content;
+    private Set<String> symlink_content;
+
+    private Long items;
+    private Long files;
+    private Long subdirs;
+    private Long symlink;
 
 
     /**
@@ -43,6 +51,12 @@ public class Directory {
         this.path       = path;
         dirs_content    = new ArrayList<Directory>();
         files_content   = new HashMap<String, Long>();
+        symlink_content = new HashSet<String>();
+
+        items = 0l;
+        files = 0l;
+        subdirs = 0l;
+        symlink = 0l;
     }
 
     
@@ -91,6 +105,11 @@ public class Directory {
         return files_content;
     }
 
+
+    public Set<String> getSymLinkContent () {
+        return symlink_content;
+    }
+
     /**
      *
      * */
@@ -117,7 +136,38 @@ public class Directory {
         this.files_content.put(name, size);
         // this.name = name;
         // this.size = size;
+    }
 
+
+    public void addSymLink (String path) {
+        this.symlink_content.add(path);
+    }
+
+    public void addFile (Integer newf) {
+        files += newf;
+        items += newf;
+    }
+
+    public Long getFile () {
+        return files;
+    }
+
+    public void addSubDir (Integer newd) {
+        subdirs += newd;
+        items += newd;
+    }
+
+    public Long getSubDir () {
+        return subdirs;
+    }
+
+    public void addSymLink (Integer newl) {
+        symlink += newl;
+        items += newl;
+    }
+
+    public Long getSymLink () {
+        return symlink;
     }
 
 }
