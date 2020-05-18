@@ -147,6 +147,11 @@ public class SystemFile {
     }
 
 
+    public Directory getDirTree () {
+        return dir_tree;
+    }
+
+
     /**
      * Allows you to loop through the file system recursively
      * It doesn't requires a String which represent the path, so it'll take the default start path
@@ -197,7 +202,7 @@ public class SystemFile {
                     if (enable_print)
                         System.out.println( "Sym:" + f.toRealPath() );
                     link_num++;
-                    dir.addSymLink(f.toRealPath().toString());
+                    dir.addSymLink(f.getFileName().toString());
                     dir.addSymLink(1);
                 } else if (Files.isDirectory(f)) {      // Encontrado directorio
                     if (enable_print)

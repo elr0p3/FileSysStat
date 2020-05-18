@@ -4,6 +4,7 @@ import java.awt.BorderLayout;
 import java.awt.ComponentOrientation;
 import java.awt.Dimension;
 import java.awt.GridBagLayout;
+import java.io.IOException;
 import java.util.Map;
 import java.awt.GridBagConstraints;
 
@@ -18,6 +19,7 @@ import javax.swing.JTable;
 import javax.swing.JTree;
 import javax.swing.tree.DefaultMutableTreeNode;
 
+import r0p3.Directory;
 import r0p3.FileData;
 
 public class Table extends JFrame {
@@ -32,10 +34,12 @@ public class Table extends JFrame {
     private JTree fileSysTree;
     private DefaultMutableTreeNode root;
     private TFileData tdata;
+    private TreeTable ttable;
 
     private String pathToStart;
 
 	private Map<String, FileData> fileData;
+    private Directory fs_dir;
 
     public Table (String title) {
         super(title);
@@ -71,8 +75,10 @@ public class Table extends JFrame {
     /**
      *  Positions the items in the gui
      * */
-    public void createAndShowGUI (Map<String, FileData> fd) {
+    public void createAndShowGUI (Map<String, FileData> fd, Directory dir)
+            throws IOException {
         fileData = fd;
+        fs_dir = dir;
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		// setSize(new Dimension(640, 480));
 		
@@ -89,7 +95,7 @@ public class Table extends JFrame {
         return menubar;
     }
 
-    public JPanel addComponentsToPane () {
+    public JPanel addComponentsToPane () throws IOException {
         JPanel panel = new JPanel();
         panel.setComponentOrientation(ComponentOrientation.LEFT_TO_RIGHT);
         panel.setLayout(new GridBagLayout());
@@ -116,11 +122,12 @@ public class Table extends JFrame {
         return panel;
     }
     
-    public JTree setFileSystemTree () {
-        root = new DefaultMutableTreeNode(pathToStart);
-        fileSysTree = new JTree(root);
-        DefaultMutableTreeNode otro = new DefaultMutableTreeNode("Maricon");
-        root.add(otro);
+    public JTree setFileSystemTree () throws IOException {
+        // root = new DefaultMutableTreeNode(pathToStart);
+        // DefaultMutableTreeNode otro = new DefaultMutableTreeNode("Maricon");
+        // root.add(otro);
+        ttable = new TreeTable(fs_dir);
+        fileSysTree = new JTree(ttable.setTree());
 
         return fileSysTree;
     }

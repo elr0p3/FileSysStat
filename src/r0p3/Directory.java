@@ -139,8 +139,8 @@ public class Directory {
     }
 
 
-    public void addSymLink (String path) {
-        this.symlink_content.add(path);
+    public void addSymLink (String name) {
+        this.symlink_content.add(name);
     }
 
     public void addFile (Integer newf) {
