@@ -95,6 +95,7 @@ public class Table extends JFrame {
 		
         add(setMenu(total, used), BorderLayout.NORTH);
         add(addComponentsToPane(), BorderLayout.CENTER);
+        add(graphZone(total, used), BorderLayout.SOUTH);
 		
         pack();
 		setVisible(true);
@@ -116,9 +117,16 @@ public class Table extends JFrame {
     }
 
     private void graphWindow (Map<String, Long> total, Map<String, Long> used) {
+        JDialog frameWindow = new JDialog();
+
+        frameWindow.add(graphZone(total, used));
+        frameWindow.pack();
+		frameWindow.setVisible(true);
+    }
+
+    private JPanel graphZone (Map<String, Long> total, Map<String, Long> used) {
         Integer sz = total.size();
         int i = 0;
-        JDialog frameWindow = new JDialog();
 		JPanel panel = new JPanel(new GridLayout(sz, 1));
         
         partition_name = new JLabel[sz];
@@ -143,9 +151,7 @@ public class Table extends JFrame {
             panel.add(partition_sizeBars[i]);
         }
 
-        frameWindow.add(panel);
-        frameWindow.pack();
-		frameWindow.setVisible(true);
+        return panel;
     }
 
     public JPanel addComponentsToPane () throws IOException {
