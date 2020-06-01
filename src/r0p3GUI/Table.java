@@ -131,9 +131,10 @@ public class Table extends JFrame {
 
         partition_sizeBars = new JProgressBar[sz];
         for (Map.Entry<String, Long> entry : total.entrySet()) {
-            partition_sizeBars[i] = new JProgressBar();
+            partition_sizeBars[i] = new JProgressBar(0, 100);
             Long use = used.get(entry.getKey());
             partition_sizeBars[i].setValue((int)(use * 100 / entry.getValue()));
+            partition_sizeBars[i].setStringPainted(true);
             i++;
         }
 
