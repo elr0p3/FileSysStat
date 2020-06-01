@@ -16,6 +16,7 @@ import java.io.IOException;
 import java.nio.file.AccessDeniedException;
 import java.nio.file.DirectoryIteratorException;
 import java.nio.file.FileStore;
+import java.nio.file.FileSystem;
 import java.nio.file.FileSystemException;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
@@ -29,10 +30,13 @@ public class SystemFile {
     private Long        file_num;
     private Long        link_num;
     private Long        used_space;
+    private Long        free_space;
     private Long        total_space;
     private Long        scanned_space;
     private Directory   dir_tree;
     private Map<String, FileData> files_data;
+    private Map<String, Long> partition_used; 
+    private Map<String, Long> partition_disk; 
 
     private Integer MAX_SPACE_PRINT = 0;
 
@@ -58,17 +62,44 @@ public class SystemFile {
         file_num        = 0L;
         link_num        = 0L;
         used_space      = (long)0;
+        free_space      = (long)0;
         total_space     = (long)0;
         scanned_space   = (long)0;
         files_data      = new HashMap<String, FileData>();
+        partition_used  = new HashMap<String, Long>();
+        partition_disk  = new HashMap<String, Long>();
         // dir_tree        = new Directory(path);
         
-   		Iterable<Path> roots = FileSystems.getDefault().getRootDirectories();
-        for (Path p : roots) {
-            FileStore fs = Files.getFileStore(p);
-            total_space += fs.getTotalSpace();
-            used_space  += (fs.getTotalSpace() - fs.getUsableSpace());
-        }
+           // Iterable<Path> roots = FileSystems.getDefault().getRootDirectories();
+        // for (Path p : roots) {
+            // FileStore fs = Files.getFileStore(p);
+            // total_space += fs.getTotalSpace();
+            // used_space  += (fs.getTotalSpace() - fs.getUsableSpace());
+        // }
+
+        FileSystem fileSystem = FileSystems.getDefault();
+        Iterable<FileStore> iterable = fileSystem.getFileStores();
+        iterable.forEach(s -> {
+            try {
+                if (System.getProperty("os.name").equals("Linux")) {
+                    if (s.toString().contains("(/dev/")){
+                        total_space += s.getTotalSpace();
+                        used_space += s.getTotalSpace() - s.getUsableSpace();
+                        free_space += s.getUsableSpace();
+                        partition_disk.put(s.toString(), s.getTotalSpace());
+                        partition_used.put(s.toString(), s.getTotalSpace() - s.getUsableSpace());
+                    }
+                } else {
+                    total_space += s.getTotalSpace();
+                    used_space += s.getTotalSpace() - s.getUsableSpace();
+                    free_space += s.getUsableSpace();
+                    partition_disk.put(s.toString(), s.getTotalSpace());
+                    partition_used.put(s.toString(), s.getTotalSpace() - s.getUsableSpace());
+                }
+            } catch (IOException e) {
+               e.printStackTrace();
+            }
+        });
 
         // https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/4/html/reference_guide/s2-proc-kcore
         // https://stackoverflow.com/questions/21170795/proc-kcore-file-is-huge
@@ -142,6 +173,16 @@ public class SystemFile {
     }
 
 
+    /**
+     *  Free space getter
+     *
+     *  @return     total storage free space
+     * */
+    public Long getFreeSpace () {
+        return free_space;
+    }
+
+
     public Map<String, FileData> getFileData () {
         return files_data;
     }
@@ -149,6 +190,25 @@ public class SystemFile {
 
     public Directory getDirTree () {
         return dir_tree;
+    }
+
+
+    /**
+     *  Partition total storage
+     *
+     *  @return     a map of the total memory size
+     * */
+    public Map<String, Long> getPartitionSize () {
+        return partition_disk;
+    }
+
+    /**
+     *  Partition storage used
+     *
+     *  @return     a map of the stored space used
+     * */
+    public Map<String, Long> getPartitionUsed () {
+        return partition_used;
     }
 
 

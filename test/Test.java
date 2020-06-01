@@ -35,7 +35,7 @@ public class Test {
         Iterable<FileStore> iterable = fileSystem.getFileStores();
         iterable.forEach(s -> {
             try {
-                System.out.printf("%40s | %15s | %20s | %20s \n", s, s.type(), (s.getTotalSpace() / 1073741824f) + " GB", (s.getUsableSpace() / 1073741824f) + "GB");
+                System.out.printf("%40s | %15s | %20s | %20s - %10s\n", s, s.type(), (s.getTotalSpace() / 1073741824f) + " GB", (s.getUsableSpace() / 1073741824f) + "GB", s.getTotalSpace());
             } catch (IOException e) {
                e.printStackTrace();
             }
@@ -76,6 +76,8 @@ public class Test {
             System.out.println("\nTOTAL2 -> " + fs.getTotalSpace() / 1073741824f);
         }
 
+        String os = System.getProperty("os.name");
+        System.out.println("Using System Property: " + os);
 
     }
 

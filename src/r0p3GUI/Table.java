@@ -4,10 +4,15 @@ import java.awt.BorderLayout;
 import java.awt.ComponentOrientation;
 import java.awt.Dimension;
 import java.awt.GridBagLayout;
+import java.awt.GridLayout;
 import java.io.IOException;
 import java.util.Map;
 import java.awt.GridBagConstraints;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
+import javax.swing.JButton;
+import javax.swing.JDialog;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
@@ -30,6 +35,7 @@ public class Table extends JFrame {
     private JFileChooser chooser;
     private JMenuBar menubar;
     private JMenu file;
+    private JMenuItem graph;
     // private JMenuItem nuevoPedido;
     private JTree fileSysTree;
     private DefaultMutableTreeNode root;
@@ -46,6 +52,7 @@ public class Table extends JFrame {
         chooser = new JFileChooser();
         menubar = new JMenuBar();
         file = new JMenu("File");
+        graph = new JMenuItem("Graph");
         tdata = new TFileData();
     }
 
@@ -75,24 +82,43 @@ public class Table extends JFrame {
     /**
      *  Positions the items in the gui
      * */
-    public void createAndShowGUI (Map<String, FileData> fd, Directory dir)
+    public void createAndShowGUI (Map<String, FileData> fd, Directory dir, Map<String, Long> total, Map<String, Long> used)
             throws IOException {
         fileData = fd;
         fs_dir = dir;
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		// setSize(new Dimension(640, 480));
 		
-        add(setMenu(), BorderLayout.NORTH);
+        add(setMenu(total, used), BorderLayout.NORTH);
         add(addComponentsToPane(), BorderLayout.CENTER);
 		
         pack();
 		setVisible(true);
     }
 
-    public JMenuBar setMenu () {
+    private JMenuBar setMenu (Map<String, Long> total, Map<String, Long> used) {
         menubar.add(file);
+        menubar.add(graph);
+
+        graph.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+                graphWindow(total, used);
+			}
+		});
 
         return menubar;
+    }
+
+    private void graphWindow (Map<String, Long> total, Map<String, Long> used) {
+        JDialog frameWindow = new JDialog();
+		JPanel panel = new JPanel(new GridLayout(total.size(), 1));
+        JButton b = new JButton("Maricon");
+        panel.add(b);
+        frameWindow.add(panel);
+        frameWindow.pack();
+		frameWindow.setVisible(true);
     }
 
     public JPanel addComponentsToPane () throws IOException {
