@@ -11,14 +11,15 @@ import java.awt.GridBagConstraints;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
+import javax.swing.JProgressBar;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTree;
@@ -41,6 +42,9 @@ public class Table extends JFrame {
     private DefaultMutableTreeNode root;
     private TFileData tdata;
     private TreeTable ttable;
+
+    private JLabel[] partition_name;
+    private JProgressBar[] partition_sizeBars;
 
     private String pathToStart;
 
@@ -112,10 +116,32 @@ public class Table extends JFrame {
     }
 
     private void graphWindow (Map<String, Long> total, Map<String, Long> used) {
+        Integer sz = total.size();
+        int i = 0;
         JDialog frameWindow = new JDialog();
-		JPanel panel = new JPanel(new GridLayout(total.size(), 1));
-        JButton b = new JButton("Maricon");
-        panel.add(b);
+		JPanel panel = new JPanel(new GridLayout(sz, 1));
+        
+        partition_name = new JLabel[sz];
+        for (Map.Entry<String, Long> entry : total.entrySet()) {
+            partition_name[i] = new JLabel(entry.getKey());
+            i++;
+        }
+
+        i = 0;
+
+        partition_sizeBars = new JProgressBar[sz];
+        for (Map.Entry<String, Long> entry : total.entrySet()) {
+            partition_sizeBars[i] = new JProgressBar();
+            Long use = used.get(entry.getKey());
+            partition_sizeBars[i].setValue((int)(use * 100 / entry.getValue()));
+            i++;
+        }
+
+        for (i = 0; i < sz; i++) {
+            panel.add(partition_name[i]);
+            panel.add(partition_sizeBars[i]);
+        }
+
         frameWindow.add(panel);
         frameWindow.pack();
 		frameWindow.setVisible(true);
