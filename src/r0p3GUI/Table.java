@@ -5,6 +5,8 @@ import java.awt.ComponentOrientation;
 import java.awt.Dimension;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
+import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Map;
 import java.awt.GridBagConstraints;
@@ -36,11 +38,11 @@ public class Table extends JFrame {
     private JFileChooser chooser;
     private JMenuBar menubar;
     private JMenu file;
-    private JMenuItem graph;
-    private JMenuItem reverse;
-    private JMenuItem information;
+    private JMenu window;
+    private JMenuItem graph, reverse, export;
     private JTree fileSysTree;
     private DefaultMutableTreeNode root;
+
     private JTable table;
     private TFileData tdata;
     private TreeTable ttable;
@@ -58,9 +60,10 @@ public class Table extends JFrame {
         chooser = new JFileChooser();
         menubar = new JMenuBar();
         file = new JMenu("File");
+        window= new JMenu("Window");
         graph = new JMenuItem("Graph");
         reverse = new JMenuItem("Reverse");
-        information = new JMenuItem("Information");
+        export = new JMenuItem("Export");
         tdata = new TFileData();
     }
 
@@ -78,7 +81,7 @@ public class Table extends JFrame {
 
         if (chooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
             System.out.println("getCurrentDirectory(): " + chooser.getCurrentDirectory());
-            System.out.println("getSelectedFile() : " + chooser.getSelectedFile());
+            System.out.println("getSelectedFile()    : " + chooser.getSelectedFile());
             pathToStart = chooser.getSelectedFile().toString();
             return pathToStart;
         }
@@ -86,11 +89,41 @@ public class Table extends JFrame {
         return null;
     }
 
+    /**
+     *  Method to select a file to store data
+     *  
+     *  @return     the path where it start scanning
+     * */
+    public String createFile () throws IOException {
+        File file = null;
+        chooser.setCurrentDirectory(new java.io.File("."));
+        chooser.setDialogTitle("Directory Chooser");
+        chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+        chooser.setAcceptAllFileFilterUsed(false);
+
+        if (chooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
+            System.out.println("getCurrentDirectory(): " + chooser.getCurrentDirectory());
+            System.out.println("getSelectedFile()    : " + chooser.getSelectedFile());
+            // file = new File(chooser.getSelectedFile() + "/saved_data.txt");
+            file = chooser.getSelectedFile();
+            if (file.getName().equals(".")) {
+                System.err.println("ERROR! Wrong file name");
+                return null;
+            }
+            if (!file.createNewFile())
+                System.err.println("ERROR! Cannot create the file");
+            System.out.println("PATH -> " + file.getPath().toString());
+            return file.getPath().toString();
+        }
+        System.out.println("No Selection ");
+        return null;
+    }
 
     /**
      *  Positions the items in the gui
      * */
-    public void createAndShowGUI (Map<String, FileData> fd, Directory dir, Map<String, Long> total, Map<String, Long> used)
+    public void createAndShowGUI (Map<String, FileData> fd, Directory dir,
+            Map<String, Long> total, Map<String, Long> used)
             throws IOException {
         fileData = fd;
         fs_dir = dir;
@@ -105,11 +138,13 @@ public class Table extends JFrame {
 		setVisible(true);
     }
 
-    private JMenuBar setMenu (Map<String, Long> total, Map<String, Long> used) {
+    private JMenuBar setMenu (Map<String, Long> total, Map<String, Long> used) 
+            throws IOException {
         menubar.add(file);
-        menubar.add(graph);
-        menubar.add(reverse);
-        menubar.add(information);
+        menubar.add(window);
+        window.add(graph);
+        window.add(reverse);
+        menubar.add(export);
 
         graph.addActionListener(new ActionListener() {
 			
@@ -125,6 +160,18 @@ public class Table extends JFrame {
 			public void actionPerformed(ActionEvent arg0) {
                 tdata.reverseElements();
                 table.updateUI();
+			}
+		});
+
+        export.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+                try {
+                    exportData();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
 			}
 		});
 
@@ -169,7 +216,7 @@ public class Table extends JFrame {
         return panel;
     }
 
-    public JPanel addComponentsToPane () throws IOException {
+    private JPanel addComponentsToPane () throws IOException {
         JPanel panel = new JPanel();
         panel.setComponentOrientation(ComponentOrientation.LEFT_TO_RIGHT);
         panel.setLayout(new GridBagLayout());
@@ -197,7 +244,7 @@ public class Table extends JFrame {
         return panel;
     }
     
-    public JTree setFileSystemTree () throws IOException {
+    private JTree setFileSystemTree () throws IOException {
         // root = new DefaultMutableTreeNode(pathToStart);
         // DefaultMutableTreeNode otro = new DefaultMutableTreeNode("Maricon");
         // root.add(otro);
@@ -207,9 +254,27 @@ public class Table extends JFrame {
         return fileSysTree;
     }
 
-    public TFileData setFileDataTable () {
+    private TFileData setFileDataTable () {
         tdata.setElements(fileData);
         return tdata;
+    }
+
+    private void exportData () throws IOException {
+        String path = createFile(); 
+        if (path != null) {
+            FileWriter file = new FileWriter(path, true);
+            for (FileData f : tdata.getTableData()) {
+                file.append("EXTENTION:" + f.getExtention() + "\n");
+                // file.append("PERCENTAGE:" + String.format("%.16f", f.getPercentage()) + "\n");
+                file.append("PERCENTAGE:" + f.getPercentage().toString() + "\n");
+                file.append("NUMBER:" + f.getNumberOfFiles().toString() + "\n");
+                file.append("SIZE:" + f.getSize().toString() + "\n");
+                file.append("\n");
+            }
+            file.close();
+        } else {
+            System.err.println("ERROR! Cannot access the dir");
+        }
     }
 
 }

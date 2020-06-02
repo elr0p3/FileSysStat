@@ -23,6 +23,10 @@ public class TFileData implements TableModel {
 		fileData = new ArrayList<FileData>();
 	}
 
+    public List<FileData> getTableData () {
+        return fileData;
+    }
+
     public void setElements (Map<String, FileData> fd) {
         ArrayList<Long> sizes = new ArrayList<Long>();
 
