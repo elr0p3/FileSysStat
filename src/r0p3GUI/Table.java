@@ -37,9 +37,11 @@ public class Table extends JFrame {
     private JMenuBar menubar;
     private JMenu file;
     private JMenuItem graph;
-    // private JMenuItem nuevoPedido;
+    private JMenuItem reverse;
+    private JMenuItem information;
     private JTree fileSysTree;
     private DefaultMutableTreeNode root;
+    private JTable table;
     private TFileData tdata;
     private TreeTable ttable;
 
@@ -57,6 +59,8 @@ public class Table extends JFrame {
         menubar = new JMenuBar();
         file = new JMenu("File");
         graph = new JMenuItem("Graph");
+        reverse = new JMenuItem("Reverse");
+        information = new JMenuItem("Information");
         tdata = new TFileData();
     }
 
@@ -104,12 +108,23 @@ public class Table extends JFrame {
     private JMenuBar setMenu (Map<String, Long> total, Map<String, Long> used) {
         menubar.add(file);
         menubar.add(graph);
+        menubar.add(reverse);
+        menubar.add(information);
 
         graph.addActionListener(new ActionListener() {
 			
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
                 graphWindow(total, used);
+			}
+		});
+
+        reverse.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+                tdata.reverseElements();
+                table.updateUI();
 			}
 		});
 
@@ -171,7 +186,8 @@ public class Table extends JFrame {
         // gbc.weightx = 1.0;
         gbc.gridx = 1;
         gbc.gridy = 0;
-        panel.add(new JScrollPane(new JTable(setFileDataTable())), gbc);
+        table = new JTable(setFileDataTable());
+        panel.add(new JScrollPane(table), gbc);
 
         // gbc.fill = GridBagConstraints.HORIZONTAL;
         // gbc.gridx = 0;

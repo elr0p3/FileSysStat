@@ -42,6 +42,16 @@ public class TFileData implements TableModel {
         }
     }
 
+    public void reverseElements () {
+        Collections.reverse(fileData);
+        // for (int i = 0; i < fileData.size(); i++) {
+            // for (int j = 0; j < columnNames.length; j++) {
+                // System.out.println(getValueAt(i, j));
+            // }
+            // System.out.println();
+        // }
+    }
+
 	@Override
 	public void addTableModelListener(TableModelListener l) {
 
@@ -92,7 +102,7 @@ public class TFileData implements TableModel {
 
 	@Override
 	public boolean isCellEditable(int rowIndex, int columnIndex) {
-		return false;
+		return true;
 	}
 
 	@Override
@@ -102,7 +112,7 @@ public class TFileData implements TableModel {
 
 	@Override
 	public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
-
+		
 	}
 
 }

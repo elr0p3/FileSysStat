@@ -57,6 +57,10 @@ public class FileData {
         return number;
     }
 
+    public void setNumberOfFiles (Long f) {
+        number = f;
+    }
+
     /**
      * Add some files, if they were scanned
      * It helps because java hashmaps are miserable
