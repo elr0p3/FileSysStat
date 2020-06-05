@@ -2,7 +2,6 @@ package r0p3GUI;
 
 import java.awt.BorderLayout;
 import java.awt.ComponentOrientation;
-import java.awt.Dimension;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.io.File;
@@ -29,6 +28,7 @@ import javax.swing.tree.DefaultMutableTreeNode;
 
 import r0p3.Directory;
 import r0p3.FileData;
+import r0p3.SystemFile;
 
 public class Table extends JFrame {
 
@@ -39,7 +39,7 @@ public class Table extends JFrame {
     private JMenuBar menubar;
     private JMenu file;
     private JMenu window;
-    private JMenuItem graph, reverse, export;
+    private JMenuItem reverse, treeB, tableB, graphB, export;
     private JTree fileSysTree;
     private DefaultMutableTreeNode root;
 
@@ -54,6 +54,9 @@ public class Table extends JFrame {
 
 	private Map<String, FileData> fileData;
     private Directory fs_dir;
+    private Map<String, Long> total;
+    private Map<String, Long> used;
+
 
     public Table (String title) {
         super(title);
@@ -61,7 +64,9 @@ public class Table extends JFrame {
         menubar = new JMenuBar();
         file = new JMenu("File");
         window= new JMenu("Window");
-        graph = new JMenuItem("Graph");
+        tableB = new JMenuItem("Table");
+        treeB = new JMenuItem("Tree");
+        graphB = new JMenuItem("Graph");
         reverse = new JMenuItem("Reverse");
         export = new JMenuItem("Export");
         tdata = new TFileData();
@@ -94,7 +99,7 @@ public class Table extends JFrame {
      *  
      *  @return     the path where it start scanning
      * */
-    public String createFile () throws IOException {
+     private String createFile () throws IOException {
         File file = null;
         chooser.setCurrentDirectory(new java.io.File("."));
         chooser.setDialogTitle("Directory Chooser");
@@ -122,13 +127,12 @@ public class Table extends JFrame {
     /**
      *  Positions the items in the gui
      * */
-    public void createAndShowGUI (Map<String, FileData> fd, Directory dir,
-            Map<String, Long> total, Map<String, Long> used)
-            throws IOException {
-        fileData = fd;
-        fs_dir = dir;
+    public void createAndShowGUI (SystemFile sf) throws IOException {
+        fileData = sf.getFileData();
+        fs_dir = sf.getDirTree();
+        total = sf.getPartitionSize();
+        used = sf.getPartitionUsed();
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		// setSize(new Dimension(640, 480));
 		
         add(setMenu(total, used), BorderLayout.NORTH);
         add(addComponentsToPane(), BorderLayout.CENTER);
@@ -142,11 +146,34 @@ public class Table extends JFrame {
             throws IOException {
         menubar.add(file);
         menubar.add(window);
-        window.add(graph);
+        window.add(tableB);
+        window.add(treeB);
+        window.add(graphB);
         window.add(reverse);
         menubar.add(export);
 
-        graph.addActionListener(new ActionListener() {
+        tableB.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+                tableWindow();
+			}
+		});
+
+        treeB.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+                try {
+                    treeWindow();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+			}
+		});
+
+
+        graphB.addActionListener(new ActionListener() {
 			
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
@@ -177,6 +204,24 @@ public class Table extends JFrame {
 
         return menubar;
     }
+
+    private void tableWindow () {
+        JDialog frameWindow = new JDialog();
+
+        JTable new_table = new JTable(setFileDataTable());
+        frameWindow.add(new JScrollPane(new_table));
+        frameWindow.pack();
+		frameWindow.setVisible(true);
+    }
+
+    private void treeWindow () throws IOException {
+        JDialog frameWindow = new JDialog();
+
+        frameWindow.add(new JScrollPane(setFileSystemTree()));
+        frameWindow.pack();
+		frameWindow.setVisible(true);
+    }
+
 
     private void graphWindow (Map<String, Long> total, Map<String, Long> used) {
         JDialog frameWindow = new JDialog();

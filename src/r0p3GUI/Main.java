@@ -16,7 +16,7 @@ public class Main {
                 if (path != null) {
                     try {
                         fs.travelDirectories(path, false);
-            	        tbl.createAndShowGUI(fs.getFileData(), fs.getDirTree(), fs.getPartitionSize(), fs.getPartitionUsed());
+            	        tbl.createAndShowGUI(fs);
                     } catch (IOException e)  {
                         e.printStackTrace();
                     }
