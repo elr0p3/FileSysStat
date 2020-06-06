@@ -2,6 +2,7 @@ package r0p3GUI;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -18,9 +19,16 @@ public class TFileData implements TableModel {
     public static final String PERCENTAGE = "Percentage";
     public static final String NUMBER = "Number";
     public static final String SIZE = "Size";
+	private List<FileData> auxData;
+
+    public static final String UP = "UP";
+    public static final String DOWN = "DOWN";
+
+
 
 	public TFileData () {
 		fileData = new ArrayList<FileData>();
+        auxData = fileData;
 	}
 
     public List<FileData> getTableData () {
@@ -54,6 +62,61 @@ public class TFileData implements TableModel {
             // }
             // System.out.println();
         // }
+    }
+
+    public void filterExtention (String extention) {
+        if (auxData.size() == fileData.size())
+            auxData = new ArrayList<FileData>(fileData);
+   		Iterator<FileData> it = fileData.iterator();
+		while(it.hasNext()) {
+			FileData next = it.next();
+			if(!extention.equals(next.getExtention()) &&
+                        !extention.equals("." + next.getExtention()))
+				it.remove();
+		}
+    }
+
+    public void filterPercentage (Float percentage, String order) {
+        if (auxData.size() == fileData.size())
+            auxData = new ArrayList<FileData>(fileData);
+   		Iterator<FileData> it = fileData.iterator();
+		while(it.hasNext()) {
+			FileData next = it.next();
+			if(percentage > next.getPercentage() && order.equals(UP))
+				it.remove();
+			if(percentage < next.getPercentage() && order.equals(DOWN))
+				it.remove();
+		}
+    }
+
+    public void filterNumber (Long number, String order) {
+        if (auxData.size() == fileData.size())
+            auxData = new ArrayList<FileData>(fileData);
+   		Iterator<FileData> it = fileData.iterator();
+		while(it.hasNext()) {
+			FileData next = it.next();
+			if(number > next.getNumberOfFiles() && order.equals(UP))
+				it.remove();
+			if(number < next.getNumberOfFiles() && order.equals(DOWN))
+				it.remove();
+		}
+    }
+
+    public void filterSize (Long size, String order) {
+        if (auxData.size() == fileData.size())
+            auxData = new ArrayList<FileData>(fileData);
+   		Iterator<FileData> it = fileData.iterator();
+		while(it.hasNext()) {
+			FileData next = it.next();
+			if(size > next.getSize() && order.equals(UP))
+				it.remove();
+			if(size < next.getSize() && order.equals(DOWN))
+				it.remove();
+		}
+    }
+
+    public void unfilter () {
+        fileData = new ArrayList<FileData>(auxData);
     }
 
 	@Override

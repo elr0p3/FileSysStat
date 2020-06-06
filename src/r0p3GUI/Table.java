@@ -2,6 +2,8 @@ package r0p3GUI;
 
 import java.awt.BorderLayout;
 import java.awt.ComponentOrientation;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.io.File;
@@ -12,6 +14,7 @@ import java.awt.GridBagConstraints;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
@@ -23,6 +26,7 @@ import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.JTextField;
 import javax.swing.JTree;
 import javax.swing.tree.DefaultMutableTreeNode;
 
@@ -37,9 +41,10 @@ public class Table extends JFrame {
     
     private JFileChooser chooser;
     private JMenuBar menubar;
-    private JMenu file;
-    private JMenu window;
-    private JMenuItem reverse, treeB, tableB, graphB, export;
+    private JMenu file, window, filter;
+    private JMenuItem reverse, treeB, tableB, graphB,
+            extentionB, percentageB, numberB, sizeB, unfilterB,
+            export;
     private JTree fileSysTree;
     private DefaultMutableTreeNode root;
 
@@ -58,16 +63,23 @@ public class Table extends JFrame {
     private Map<String, Long> used;
 
 
+
     public Table (String title) {
         super(title);
         chooser = new JFileChooser();
         menubar = new JMenuBar();
-        file = new JMenu("File");
-        window= new JMenu("Window");
-        tableB = new JMenuItem("Table");
-        treeB = new JMenuItem("Tree");
-        graphB = new JMenuItem("Graph");
+        file   = new JMenu("File");
+        window = new JMenu("Window");
+        filter = new JMenu("Filter");
+        tableB  = new JMenuItem("Table");
+        treeB   = new JMenuItem("Tree");
+        graphB  = new JMenuItem("Graph");
         reverse = new JMenuItem("Reverse");
+        extentionB  = new JMenuItem("Extention");
+        percentageB = new JMenuItem("Percentage");
+        numberB     = new JMenuItem("Number");
+        sizeB       = new JMenuItem("Size");
+        unfilterB   = new JMenuItem("Unfilter");
         export = new JMenuItem("Export");
         tdata = new TFileData();
     }
@@ -145,11 +157,20 @@ public class Table extends JFrame {
     private JMenuBar setMenu (Map<String, Long> total, Map<String, Long> used) 
             throws IOException {
         menubar.add(file);
+        
         menubar.add(window);
         window.add(tableB);
         window.add(treeB);
         window.add(graphB);
         window.add(reverse);
+        
+        menubar.add(filter);
+        filter.add(extentionB);
+        filter.add(percentageB);
+        filter.add(numberB);
+        filter.add(sizeB);
+        filter.add(unfilterB);
+        
         menubar.add(export);
 
         tableB.addActionListener(new ActionListener() {
@@ -187,6 +208,46 @@ public class Table extends JFrame {
 			public void actionPerformed(ActionEvent arg0) {
                 tdata.reverseElements();
                 table.updateUI();
+			}
+		});
+
+        extentionB.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+                getExtentionFilter();
+			}
+		});
+
+        percentageB.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+                getPercentageFilter();
+			}
+		});
+
+        numberB.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+                getNumberFilter();
+			}
+		});
+
+        sizeB.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+                getSizeFilter();
+			}
+		});
+
+        unfilterB.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+                unfilterRows();
 			}
 		});
 
@@ -320,6 +381,98 @@ public class Table extends JFrame {
         } else {
             System.err.println("ERROR! Cannot access the dir");
         }
+    }
+
+    private void getExtentionFilter () {
+        JDialog frameWindow = new JDialog();
+        JPanel panel = new JPanel(new FlowLayout());
+        JLabel label = new JLabel("Introduce the file extention: ");
+        JTextField text = new JTextField();
+        text.setPreferredSize(new Dimension(300, 20));
+        JButton button = new JButton("Accept");
+
+        panel.add(label);
+        panel.add(text);
+        panel.add(button);
+
+        button.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+                filterRows(text.getText());
+		        frameWindow.setVisible(false);
+			}
+		});
+
+        frameWindow.add(panel);
+        frameWindow.pack();
+		frameWindow.setVisible(true);
+    }
+
+    private void filterRows (String data) {
+
+        if (data != null) {
+            tdata.filterExtention(data);
+            table.updateUI();
+        } else {
+            System.err.println("ERROR! Unknow type");
+        }
+    }
+
+    private void getPercentageFilter () {
+
+    }
+    private void getNumberFilter () {
+
+    }
+
+    private void getSizeFilter () {
+
+    }
+
+    private void filterRows (String type, Object data, String order) {
+
+        if (type.equals(TFileData.PERCENTAGE) &&
+                (data instanceof Float || data instanceof Integer)) {
+            if (order.equals(TFileData.UP)) {
+                tdata.filterPercentage((float)data, TFileData.UP);
+                table.updateUI();
+            } else if (order.equals(TFileData.DOWN)){
+                tdata.filterPercentage((float)data, TFileData.DOWN);
+                table.updateUI();
+            } else
+                System.err.println("ERROR! Unknow type");
+            
+        } else if (type.equals(TFileData.NUMBER) &&
+                (data instanceof Long || data instanceof Integer)) {
+            if (order.equals(TFileData.UP)) {
+                tdata.filterNumber((long)data, TFileData.UP);
+                table.updateUI();
+            } else if (order.equals(TFileData.DOWN)){
+                tdata.filterNumber((long)data, TFileData.DOWN);
+                table.updateUI();
+            } else
+                System.err.println("ERROR! Unknow type");
+            
+        } else if (type.equals(TFileData.SIZE) &&
+                (data instanceof Long || data instanceof Integer)) {
+            if (order.equals(TFileData.UP)) {
+                tdata.filterSize((long)data, TFileData.UP);
+                table.updateUI();
+            } else if (order.equals(TFileData.DOWN)){
+                tdata.filterSize((long)data, TFileData.DOWN);
+                table.updateUI();
+            } else
+                System.err.println("ERROR! Unknow type");
+            
+        } else {
+            System.err.println("ERROR! Unknow type");
+        }
+    }
+
+    private void unfilterRows () {
+        tdata.unfilter();
+        table.updateUI();
     }
 
 }
