@@ -195,7 +195,6 @@ public class Table extends JFrame {
 			}
 		});
 
-
         graphB.addActionListener(new ActionListener() {
 			
 			@Override
