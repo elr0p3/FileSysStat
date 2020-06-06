@@ -30,6 +30,8 @@ import javax.swing.JTextField;
 import javax.swing.JTree;
 import javax.swing.tree.DefaultMutableTreeNode;
 
+import java.util.regex.*;
+
 import r0p3.Directory;
 import r0p3.FileData;
 import r0p3.SystemFile;
@@ -385,6 +387,7 @@ public class Table extends JFrame {
 
     private void getExtentionFilter () {
         JDialog frameWindow = new JDialog();
+        frameWindow.setTitle("Extention Filter");
         JPanel panel = new JPanel(new FlowLayout());
         JLabel label = new JLabel("Introduce the file extention: ");
         JTextField text = new JTextField();
@@ -420,47 +423,200 @@ public class Table extends JFrame {
     }
 
     private void getPercentageFilter () {
+        JDialog frameWindow = new JDialog();
+        frameWindow.setTitle("Percentage Filter");
+        JPanel panel = new JPanel(new GridLayout(2, 1));
+        JLabel label = new JLabel("Introduce the percentage: ");
+        JTextField text = new JTextField();
+        // text.setPreferredSize(new Dimension(300, 20));
+        JButton buttonU = new JButton("Upper");
+        JButton buttonL = new JButton("Lower");
 
+        panel.add(label);
+        panel.add(text);
+        panel.add(buttonU);
+        panel.add(buttonL);
+
+        buttonU.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+                Pattern pattern = Pattern.compile("[a-zA-Z]");
+                Matcher matcher = pattern.matcher(text.getText());
+
+                if (matcher.find()) {
+                    frameWindow.setTitle("ERROR! Invalid input");
+                    System.err.println("ERROR! Invalid input");
+                } else {
+                    filterRows(TFileData.PERCENTAGE, text.getText(), TFileData.UP);
+		            frameWindow.setVisible(false);
+                }
+			}
+		});
+
+        buttonL.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+                Pattern pattern = Pattern.compile("[a-zA-Z]");
+                Matcher matcher = pattern.matcher(text.getText());
+
+                if (matcher.find()) {
+                    frameWindow.setTitle("ERROR! Invalid input");
+                    System.err.println("ERROR! Invalid input");
+                } else {
+                    filterRows(TFileData.PERCENTAGE, text.getText(), TFileData.DOWN);
+		            frameWindow.setVisible(false);
+                }
+			}
+		});
+
+        frameWindow.add(panel);
+        frameWindow.pack();
+		frameWindow.setVisible(true);
     }
-    private void getNumberFilter () {
 
+    private void getNumberFilter () {
+        JDialog frameWindow = new JDialog();
+        frameWindow.setTitle("File Number Filter");
+        JPanel panel = new JPanel(new GridLayout(2, 1));
+        JLabel label = new JLabel("Introduce the file number: ");
+        JTextField text = new JTextField();
+        JButton buttonU = new JButton("Upper");
+        JButton buttonL = new JButton("Lower");
+
+        panel.add(label);
+        panel.add(text);
+        panel.add(buttonU);
+        panel.add(buttonL);
+
+        buttonU.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+                Pattern pattern = Pattern.compile("[a-zA-Z]");
+                Matcher matcher = pattern.matcher(text.getText());
+
+                if (matcher.find()) {
+                    frameWindow.setTitle("ERROR! Invalid input");
+                    System.err.println("ERROR! Invalid input");
+                } else {
+                    filterRows(TFileData.NUMBER, text.getText(), TFileData.UP);
+		            frameWindow.setVisible(false);
+                }
+			}
+		});
+
+        buttonL.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+                Pattern pattern = Pattern.compile("[a-zA-Z]");
+                Matcher matcher = pattern.matcher(text.getText());
+
+                if (matcher.find()) {
+                    frameWindow.setTitle("ERROR! Invalid input");
+                    System.err.println("ERROR! Invalid input");
+                } else {
+                    filterRows(TFileData.NUMBER, text.getText(), TFileData.DOWN);
+		            frameWindow.setVisible(false);
+                }
+			}
+		});
+
+        frameWindow.add(panel);
+        frameWindow.pack();
+		frameWindow.setVisible(true);
     }
 
     private void getSizeFilter () {
+        JDialog frameWindow = new JDialog();
+        frameWindow.setTitle("File Size Filter");
+        JPanel panel = new JPanel(new GridLayout(2, 1));
+        JLabel label = new JLabel("Introduce the file size: ");
+        JTextField text = new JTextField();
+        JButton buttonU = new JButton("Upper");
+        JButton buttonL = new JButton("Lower");
 
+        panel.add(label);
+        panel.add(text);
+        panel.add(buttonU);
+        panel.add(buttonL);
+
+        buttonU.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+                Pattern pattern = Pattern.compile("[a-zA-Z]");
+                Matcher matcher = pattern.matcher(text.getText());
+
+                if (matcher.find()) {
+                    frameWindow.setTitle("ERROR! Invalid input");
+                    System.err.println("ERROR! Invalid input");
+                } else {
+                    filterRows(TFileData.SIZE, text.getText(), TFileData.UP);
+		            frameWindow.setVisible(false);
+                }
+			}
+		});
+
+        buttonL.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+                Pattern pattern = Pattern.compile("[a-zA-Z]");
+                Matcher matcher = pattern.matcher(text.getText());
+
+                if (matcher.find()) {
+                    frameWindow.setTitle("ERROR! Invalid input");
+                    System.err.println("ERROR! Invalid input");
+                } else {
+                    filterRows(TFileData.SIZE, text.getText(), TFileData.DOWN);
+		            frameWindow.setVisible(false);
+                }
+			}
+		});
+
+        frameWindow.add(panel);
+        frameWindow.pack();
+		frameWindow.setVisible(true);
     }
 
-    private void filterRows (String type, Object data, String order) {
+    private void filterRows (String type, String data, String order) {
+        Pattern pattern = Pattern.compile("[a-zA-Z]");
+        Matcher matcher = pattern.matcher(data);
 
-        if (type.equals(TFileData.PERCENTAGE) &&
-                (data instanceof Float || data instanceof Integer)) {
+        if (matcher.find()) {
+            System.err.println("ERROR! Invalid input");
+            return;
+        }
+        
+        if (type.equals(TFileData.PERCENTAGE)) {
             if (order.equals(TFileData.UP)) {
-                tdata.filterPercentage((float)data, TFileData.UP);
+                tdata.filterPercentage(Float.parseFloat(data), TFileData.UP);
                 table.updateUI();
             } else if (order.equals(TFileData.DOWN)){
-                tdata.filterPercentage((float)data, TFileData.DOWN);
+                tdata.filterPercentage(Float.parseFloat(data), TFileData.DOWN);
                 table.updateUI();
             } else
                 System.err.println("ERROR! Unknow type");
             
-        } else if (type.equals(TFileData.NUMBER) &&
-                (data instanceof Long || data instanceof Integer)) {
+        } else if (type.equals(TFileData.NUMBER)) {
             if (order.equals(TFileData.UP)) {
-                tdata.filterNumber((long)data, TFileData.UP);
+                tdata.filterNumber(Long.valueOf(data), TFileData.UP);
                 table.updateUI();
             } else if (order.equals(TFileData.DOWN)){
-                tdata.filterNumber((long)data, TFileData.DOWN);
+                tdata.filterNumber(Long.valueOf(data), TFileData.DOWN);
                 table.updateUI();
             } else
                 System.err.println("ERROR! Unknow type");
             
-        } else if (type.equals(TFileData.SIZE) &&
-                (data instanceof Long || data instanceof Integer)) {
+        } else if (type.equals(TFileData.SIZE)) {
             if (order.equals(TFileData.UP)) {
-                tdata.filterSize((long)data, TFileData.UP);
+                tdata.filterSize(Long.valueOf(data), TFileData.UP);
                 table.updateUI();
             } else if (order.equals(TFileData.DOWN)){
-                tdata.filterSize((long)data, TFileData.DOWN);
+                tdata.filterSize(Long.valueOf(data), TFileData.DOWN);
                 table.updateUI();
             } else
                 System.err.println("ERROR! Unknow type");
