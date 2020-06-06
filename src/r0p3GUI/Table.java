@@ -45,7 +45,7 @@ public class Table extends JFrame {
     private JMenuBar menubar;
     private JMenu file, window, filter;
     private JMenuItem reverse, treeB, tableB, graphB,
-            extentionB, percentageB, numberB, sizeB, unfilterB,
+            extensionB, percentageB, numberB, sizeB, unfilterB,
             export;
     private JTree fileSysTree;
     private DefaultMutableTreeNode root;
@@ -77,7 +77,7 @@ public class Table extends JFrame {
         treeB   = new JMenuItem("Tree");
         graphB  = new JMenuItem("Graph");
         reverse = new JMenuItem("Reverse");
-        extentionB  = new JMenuItem("Extention");
+        extensionB  = new JMenuItem("Extension");
         percentageB = new JMenuItem("Percentage");
         numberB     = new JMenuItem("Number");
         sizeB       = new JMenuItem("Size");
@@ -167,7 +167,7 @@ public class Table extends JFrame {
         window.add(reverse);
         
         menubar.add(filter);
-        filter.add(extentionB);
+        filter.add(extensionB);
         filter.add(percentageB);
         filter.add(numberB);
         filter.add(sizeB);
@@ -212,11 +212,11 @@ public class Table extends JFrame {
 			}
 		});
 
-        extentionB.addActionListener(new ActionListener() {
+        extensionB.addActionListener(new ActionListener() {
 			
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-                getExtentionFilter();
+                getExtensionFilter();
 			}
 		});
 
@@ -371,7 +371,7 @@ public class Table extends JFrame {
         if (path != null) {
             FileWriter file = new FileWriter(path, true);
             for (FileData f : tdata.getTableData()) {
-                file.append("EXTENTION:" + f.getExtention() + "\n");
+                file.append("EXTENSION:" + f.getExtension() + "\n");
                 // file.append("PERCENTAGE:" + String.format("%.16f", f.getPercentage()) + "\n");
                 file.append("PERCENTAGE:" + f.getPercentage().toString() + "\n");
                 file.append("NUMBER:" + f.getNumberOfFiles().toString() + "\n");
@@ -384,11 +384,11 @@ public class Table extends JFrame {
         }
     }
 
-    private void getExtentionFilter () {
+    private void getExtensionFilter () {
         JDialog frameWindow = new JDialog();
-        frameWindow.setTitle("Extention Filter");
+        frameWindow.setTitle("Extension Filter");
         JPanel panel = new JPanel(new FlowLayout());
-        JLabel label = new JLabel("Introduce the file extention: ");
+        JLabel label = new JLabel("Introduce the file extension: ");
         JTextField text = new JTextField();
         text.setPreferredSize(new Dimension(300, 20));
         JButton button = new JButton("Accept");
@@ -414,10 +414,10 @@ public class Table extends JFrame {
     private void filterRows (String data) {
 
         if (data != null) {
-            tdata.filterExtention(data);
+            tdata.filterExtension(data);
             table.updateUI();
         } else {
-            System.err.println("ERROR! Unknow type");
+            System.err.println("ERROR! Unknown type");
         }
     }
 
@@ -440,15 +440,15 @@ public class Table extends JFrame {
 			
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-                Pattern pattern = Pattern.compile("[a-zA-Z]");
+                Pattern pattern = Pattern.compile("[0-9](\\.[0-9]+)?");
                 Matcher matcher = pattern.matcher(text.getText());
 
                 if (matcher.find()) {
-                    frameWindow.setTitle("ERROR! Invalid input");
-                    System.err.println("ERROR! Invalid input");
-                } else {
                     filterRows(TFileData.PERCENTAGE, text.getText(), TFileData.UP);
 		            frameWindow.setVisible(false);
+                } else {
+                    frameWindow.setTitle("ERROR! Invalid input");
+                    System.err.println("ERROR! Invalid input");
                 }
 			}
 		});
@@ -457,15 +457,15 @@ public class Table extends JFrame {
 			
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-                Pattern pattern = Pattern.compile("[a-zA-Z]");
+                Pattern pattern = Pattern.compile("[0-9](\\.[0-9]+)?");
                 Matcher matcher = pattern.matcher(text.getText());
 
                 if (matcher.find()) {
-                    frameWindow.setTitle("ERROR! Invalid input");
-                    System.err.println("ERROR! Invalid input");
-                } else {
                     filterRows(TFileData.PERCENTAGE, text.getText(), TFileData.DOWN);
 		            frameWindow.setVisible(false);
+                } else {
+                    frameWindow.setTitle("ERROR! Invalid input");
+                    System.err.println("ERROR! Invalid input");
                 }
 			}
 		});
@@ -493,15 +493,15 @@ public class Table extends JFrame {
 			
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-                Pattern pattern = Pattern.compile("[a-zA-Z]");
+                Pattern pattern = Pattern.compile("[0-9](\\.[0-9]+)?");
                 Matcher matcher = pattern.matcher(text.getText());
 
                 if (matcher.find()) {
-                    frameWindow.setTitle("ERROR! Invalid input");
-                    System.err.println("ERROR! Invalid input");
-                } else {
                     filterRows(TFileData.NUMBER, text.getText(), TFileData.UP);
 		            frameWindow.setVisible(false);
+                } else {
+                    frameWindow.setTitle("ERROR! Invalid input");
+                    System.err.println("ERROR! Invalid input");
                 }
 			}
 		});
@@ -510,15 +510,15 @@ public class Table extends JFrame {
 			
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-                Pattern pattern = Pattern.compile("[a-zA-Z]");
+                Pattern pattern = Pattern.compile("[0-9](\\.[0-9]+)?");
                 Matcher matcher = pattern.matcher(text.getText());
 
                 if (matcher.find()) {
-                    frameWindow.setTitle("ERROR! Invalid input");
-                    System.err.println("ERROR! Invalid input");
-                } else {
                     filterRows(TFileData.NUMBER, text.getText(), TFileData.DOWN);
 		            frameWindow.setVisible(false);
+                } else {
+                    frameWindow.setTitle("ERROR! Invalid input");
+                    System.err.println("ERROR! Invalid input");
                 }
 			}
 		});
@@ -546,15 +546,15 @@ public class Table extends JFrame {
 			
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-                Pattern pattern = Pattern.compile("[a-zA-Z]");
+                Pattern pattern = Pattern.compile("[0-9](\\.[0-9]+)?");
                 Matcher matcher = pattern.matcher(text.getText());
 
                 if (matcher.find()) {
-                    frameWindow.setTitle("ERROR! Invalid input");
-                    System.err.println("ERROR! Invalid input");
-                } else {
                     filterRows(TFileData.SIZE, text.getText(), TFileData.UP);
 		            frameWindow.setVisible(false);
+                } else {
+                    frameWindow.setTitle("ERROR! Invalid input");
+                    System.err.println("ERROR! Invalid input");
                 }
 			}
 		});
@@ -563,15 +563,15 @@ public class Table extends JFrame {
 			
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-                Pattern pattern = Pattern.compile("[a-zA-Z]");
+                Pattern pattern = Pattern.compile("[0-9](\\.[0-9]+)?");
                 Matcher matcher = pattern.matcher(text.getText());
 
                 if (matcher.find()) {
-                    frameWindow.setTitle("ERROR! Invalid input");
-                    System.err.println("ERROR! Invalid input");
-                } else {
                     filterRows(TFileData.SIZE, text.getText(), TFileData.DOWN);
 		            frameWindow.setVisible(false);
+                } else {
+                    frameWindow.setTitle("ERROR! Invalid input");
+                    System.err.println("ERROR! Invalid input");
                 }
 			}
 		});
@@ -598,7 +598,7 @@ public class Table extends JFrame {
                 tdata.filterPercentage(Float.parseFloat(data), TFileData.DOWN);
                 table.updateUI();
             } else
-                System.err.println("ERROR! Unknow type");
+                System.err.println("ERROR! Unknown type");
             
         } else if (type.equals(TFileData.NUMBER)) {
             if (order.equals(TFileData.UP)) {
@@ -608,7 +608,7 @@ public class Table extends JFrame {
                 tdata.filterNumber(Long.valueOf(data), TFileData.DOWN);
                 table.updateUI();
             } else
-                System.err.println("ERROR! Unknow type");
+                System.err.println("ERROR! Unknown type");
             
         } else if (type.equals(TFileData.SIZE)) {
             if (order.equals(TFileData.UP)) {
@@ -618,10 +618,10 @@ public class Table extends JFrame {
                 tdata.filterSize(Long.valueOf(data), TFileData.DOWN);
                 table.updateUI();
             } else
-                System.err.println("ERROR! Unknow type");
+                System.err.println("ERROR! Unknown type");
             
         } else {
-            System.err.println("ERROR! Unknow type");
+            System.err.println("ERROR! Unknown type");
         }
     }
 

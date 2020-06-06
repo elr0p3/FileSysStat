@@ -309,10 +309,10 @@ public class SystemFile {
             // file.append(f.toString() + "\n");
             // file.close();        	
         // }
-        String[] extention = file_name.split("\\.");
+        String[] extension = file_name.split("\\.");
         String real_extnt  = "";
-        if (extention.length > 1) {
-            real_extnt = extention[extention.length - 1];
+        if (extension.length > 1) {
+            real_extnt = extension[extension.length - 1];
             if (real_extnt.length() > MAX_SPACE_PRINT)
                 MAX_SPACE_PRINT = real_extnt.length();
         }
@@ -368,14 +368,14 @@ public class SystemFile {
         System.out.println();
 
         String formatTitle = "%-" + MAX_SPACE_PRINT.toString() + "s|%-15s|%-15s|%-15s\n";
-        System.out.format(formatTitle, "Extention", "Percentage (%)", "Number of files", "Size");
+        System.out.format(formatTitle, "Extension", "Percentage (%)", "Number of files", "Size");
         printLine();
         int i = 0;
         for (FileData f : sortFiles()) {
             if (i == limit)
                 break;
             String formatData = "%-" + MAX_SPACE_PRINT.toString() + "s|%-15f|%-15d|%-15s\n";
-            System.out.format(formatData, f.getExtention(), f.getPercentage(), f.getNumberOfFiles(), f.getSizeUnit());
+            System.out.format(formatData, f.getExtension(), f.getPercentage(), f.getNumberOfFiles(), f.getSizeUnit());
             printLine();
             i++;
         }

@@ -15,7 +15,7 @@ public class TFileData implements TableModel {
 
 	private List<FileData> fileData;
     private String[] columnNames = {EXTENTION, PERCENTAGE, NUMBER, SIZE};
-    public static final String EXTENTION = "Extention";
+    public static final String EXTENTION = "Extension";
     public static final String PERCENTAGE = "Percentage";
     public static final String NUMBER = "Number";
     public static final String SIZE = "Size";
@@ -64,14 +64,14 @@ public class TFileData implements TableModel {
         // }
     }
 
-    public void filterExtention (String extention) {
+    public void filterExtension (String extension) {
         if (auxData.size() == fileData.size())
             auxData = new ArrayList<FileData>(fileData);
    		Iterator<FileData> it = fileData.iterator();
 		while(it.hasNext()) {
 			FileData next = it.next();
-			if(!extention.equals(next.getExtention()) &&
-                        !extention.equals("." + next.getExtention()))
+			if(!extension.equals(next.getExtension()) &&
+                        !extension.equals("." + next.getExtension()))
 				it.remove();
 		}
     }
@@ -153,7 +153,7 @@ public class TFileData implements TableModel {
 		FileData fd = fileData.get(rowIndex);
 
 		if (columnIndex == 0)
-			return "." + fd.getExtention();
+			return "." + fd.getExtension();
 
 		if (columnIndex == 1)
 			return fd.getPercentageFormat();

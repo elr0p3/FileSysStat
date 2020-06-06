@@ -5,7 +5,7 @@ import java.text.DecimalFormat;
 
 public class FileData {
 
-    private String  extention = "";
+    private String  extension = "";
     private Long    number;
     private Long    size;
     private Float   percentage = 0f;
@@ -13,38 +13,38 @@ public class FileData {
     /**
      * DataFile constructor
      *
-     * @param   extention   a String which represents the file extention
+     * @param   extension   a String which represents the file extension
      * */
-    public FileData (String extention) {
-        this(extention, 0L);
+    public FileData (String extension) {
+        this(extension, 0L);
     }
 
 
     /**
      * DataFile constuctor
-     * It requires a file extention and a size
+     * It requires a file extension and a size
      *
-     * @param   extention   a String which represents the file extention
+     * @param   extension   a String which represents the file extension
      * @param   size        a Long which represents the file size
      * */
-    public FileData (String extention, Long size) {
-        String[] aux = extention.split(".");
+    public FileData (String extension, Long size) {
+        String[] aux = extension.split(".");
         if (aux.length != 0)
-            this.extention = aux[aux.length - 1];
+            this.extension = aux[aux.length - 1];
         else
-            this.extention = extention;
+            this.extension = extension;
         this.number = 1L;
         this.size = size;
     }
 
 
     /**
-     * File extention getter
+     * File extension getter
      *
-     * @return  the file extention
+     * @return  the file extension
      * */
-    public String getExtention () {
-        return extention;
+    public String getExtension () {
+        return extension;
     }
 
 
@@ -73,7 +73,7 @@ public class FileData {
 
 
     /**
-     * Add a size to that file extention
+     * Add a size to that file extension
      *
      * @param   s   a Long which represents the file size
      * */

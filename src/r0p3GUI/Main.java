@@ -2,17 +2,6 @@ package r0p3GUI;
 
 import java.io.IOException;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Dimension;
-
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
-import javax.swing.JDialog;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-
 import r0p3.SystemFile;
 
 public class Main {
@@ -32,7 +21,7 @@ public class Main {
 
                         lds.createAndShowGUI();
                         fs.travelDirectories(path, false);
-                        lds.close();
+                        // lds.close();
             	        
                         tbl.createAndShowGUI(fs);
 
