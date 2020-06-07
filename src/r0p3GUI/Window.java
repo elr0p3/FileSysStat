@@ -28,7 +28,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.JTree;
-import javax.swing.tree.DefaultMutableTreeNode;
+// import javax.swing.tree.DefaultMutableTreeNode;
 
 import java.util.regex.*;
 
@@ -36,7 +36,7 @@ import r0p3.Directory;
 import r0p3.FileData;
 import r0p3.SystemFile;
 
-public class Table extends JFrame {
+public class Window extends JFrame {
 
     // porque sino se me queja
     private static final long serialVersionUID = 1L;
@@ -48,11 +48,11 @@ public class Table extends JFrame {
             extensionB, percentageB, numberB, sizeB, unfilterB,
             export;
     private JTree fileSysTree;
-    private DefaultMutableTreeNode root;
+    // private DefaultMutableTreeNode root;
 
     private JTable table;
-    private TFileData tdata;
-    private TreeTable ttable;
+    private TableFileData tdata;
+    private Tree ttable;
 
     private JLabel[] partition_name;
     private JProgressBar[] partition_sizeBars;
@@ -66,11 +66,17 @@ public class Table extends JFrame {
 
 
 
-    public Table (String title) {
+    /**
+     * Window constructor
+     *
+     * @param title the title of the window
+     * */
+    public Window (String title) {
         super(title);
         chooser = new JFileChooser();
         menubar = new JMenuBar();
         file   = new JMenu("File");
+        // file.setFont(new Font("Sf Mono", Font.PLAIN, 15));
         window = new JMenu("Window");
         filter = new JMenu("Filter");
         tableB  = new JMenuItem("Table");
@@ -83,7 +89,7 @@ public class Table extends JFrame {
         sizeB       = new JMenuItem("Size");
         unfilterB   = new JMenuItem("Unfilter");
         export = new JMenuItem("Export");
-        tdata = new TFileData();
+        tdata = new TableFileData();
     }
 
 
@@ -140,6 +146,8 @@ public class Table extends JFrame {
 
     /**
      *  Positions the items in the gui
+     *
+     *  @param sf   SystemFile object
      * */
     public void createAndShowGUI (SystemFile sf) throws IOException {
         fileData = sf.getFileData();
@@ -156,6 +164,12 @@ public class Table extends JFrame {
 		setVisible(true);
     }
 
+    /**
+     * Set buttons on the top bar
+     *
+     * @param total total data
+     * @param used  used data
+     * */
     private JMenuBar setMenu (Map<String, Long> total, Map<String, Long> used) 
             throws IOException {
         menubar.add(file);
@@ -267,6 +281,9 @@ public class Table extends JFrame {
         return menubar;
     }
 
+    /**
+     * Creates a new window containing the table data
+     * */
     private void tableWindow () {
         JDialog frameWindow = new JDialog();
 
@@ -276,6 +293,9 @@ public class Table extends JFrame {
 		frameWindow.setVisible(true);
     }
 
+    /**
+     * Creates a new window containing the file system tree
+     * */
     private void treeWindow () throws IOException {
         JDialog frameWindow = new JDialog();
 
@@ -284,7 +304,12 @@ public class Table extends JFrame {
 		frameWindow.setVisible(true);
     }
 
-
+    /**
+     * Creates a new window containing the graphs size
+     *
+     * @param total total data
+     * @param used  used data
+     * */
     private void graphWindow (Map<String, Long> total, Map<String, Long> used) {
         JDialog frameWindow = new JDialog();
 
@@ -293,6 +318,13 @@ public class Table extends JFrame {
 		frameWindow.setVisible(true);
     }
 
+    /**
+     * Creates the graphs showing the partitions storage
+     *
+     * @param total total data
+     * @param used  used data
+     * @return      a JPanel containing all the graphs
+     * */
     private JPanel graphZone (Map<String, Long> total, Map<String, Long> used) {
         Integer sz = total.size();
         int i = 0;
@@ -323,6 +355,11 @@ public class Table extends JFrame {
         return panel;
     }
 
+    /**
+     * Add all the components to the Main Pane
+     *
+     * @return  a JPanel containing the tree and the table
+     * */
     private JPanel addComponentsToPane () throws IOException {
         JPanel panel = new JPanel();
         panel.setComponentOrientation(ComponentOrientation.LEFT_TO_RIGHT);
@@ -351,21 +388,34 @@ public class Table extends JFrame {
         return panel;
     }
     
+    /**
+     * Set the File System Tree
+     *
+     * @return  JTree file system
+     * */
     private JTree setFileSystemTree () throws IOException {
         // root = new DefaultMutableTreeNode(pathToStart);
         // DefaultMutableTreeNode otro = new DefaultMutableTreeNode("Maricon");
         // root.add(otro);
-        ttable = new TreeTable(fs_dir);
+        ttable = new Tree(fs_dir);
         fileSysTree = new JTree(ttable.setTree());
 
         return fileSysTree;
     }
 
-    private TFileData setFileDataTable () {
+    /**
+     * Set the Table containing all the file data
+     *
+     * @return  a TableFileData object
+     * */
+    private TableFileData setFileDataTable () {
         tdata.setElements(fileData);
         return tdata;
     }
 
+    /**
+     * Exports file data to a file, which will be create
+     * */
     private void exportData () throws IOException {
         String path = createFile(); 
         if (path != null) {
@@ -384,6 +434,9 @@ public class Table extends JFrame {
         }
     }
 
+    /**
+     * Filter by extension button
+     * */
     private void getExtensionFilter () {
         JDialog frameWindow = new JDialog();
         frameWindow.setTitle("Extension Filter");
@@ -411,6 +464,9 @@ public class Table extends JFrame {
 		frameWindow.setVisible(true);
     }
 
+    /**
+     * Filter by extension helper
+     * */
     private void filterRows (String data) {
 
         if (data != null) {
@@ -421,6 +477,9 @@ public class Table extends JFrame {
         }
     }
 
+    /**
+     * Filter by percentage button
+     * */
     private void getPercentageFilter () {
         JDialog frameWindow = new JDialog();
         frameWindow.setTitle("Percentage Filter");
@@ -444,7 +503,7 @@ public class Table extends JFrame {
                 Matcher matcher = pattern.matcher(text.getText());
 
                 if (matcher.find()) {
-                    filterRows(TFileData.PERCENTAGE, text.getText(), TFileData.UP);
+                    filterRows(TableFileData.PERCENTAGE, text.getText(), TableFileData.UP);
 		            frameWindow.setVisible(false);
                 } else {
                     frameWindow.setTitle("ERROR! Invalid input");
@@ -461,7 +520,7 @@ public class Table extends JFrame {
                 Matcher matcher = pattern.matcher(text.getText());
 
                 if (matcher.find()) {
-                    filterRows(TFileData.PERCENTAGE, text.getText(), TFileData.DOWN);
+                    filterRows(TableFileData.PERCENTAGE, text.getText(), TableFileData.DOWN);
 		            frameWindow.setVisible(false);
                 } else {
                     frameWindow.setTitle("ERROR! Invalid input");
@@ -475,6 +534,9 @@ public class Table extends JFrame {
 		frameWindow.setVisible(true);
     }
 
+    /**
+     * Filter by number of files button
+     * */
     private void getNumberFilter () {
         JDialog frameWindow = new JDialog();
         frameWindow.setTitle("File Number Filter");
@@ -497,7 +559,7 @@ public class Table extends JFrame {
                 Matcher matcher = pattern.matcher(text.getText());
 
                 if (matcher.find()) {
-                    filterRows(TFileData.NUMBER, text.getText(), TFileData.UP);
+                    filterRows(TableFileData.NUMBER, text.getText(), TableFileData.UP);
 		            frameWindow.setVisible(false);
                 } else {
                     frameWindow.setTitle("ERROR! Invalid input");
@@ -514,7 +576,7 @@ public class Table extends JFrame {
                 Matcher matcher = pattern.matcher(text.getText());
 
                 if (matcher.find()) {
-                    filterRows(TFileData.NUMBER, text.getText(), TFileData.DOWN);
+                    filterRows(TableFileData.NUMBER, text.getText(), TableFileData.DOWN);
 		            frameWindow.setVisible(false);
                 } else {
                     frameWindow.setTitle("ERROR! Invalid input");
@@ -528,6 +590,9 @@ public class Table extends JFrame {
 		frameWindow.setVisible(true);
     }
 
+    /**
+     * Filter by file size button
+     * */
     private void getSizeFilter () {
         JDialog frameWindow = new JDialog();
         frameWindow.setTitle("File Size Filter");
@@ -550,7 +615,7 @@ public class Table extends JFrame {
                 Matcher matcher = pattern.matcher(text.getText());
 
                 if (matcher.find()) {
-                    filterRows(TFileData.SIZE, text.getText(), TFileData.UP);
+                    filterRows(TableFileData.SIZE, text.getText(), TableFileData.UP);
 		            frameWindow.setVisible(false);
                 } else {
                     frameWindow.setTitle("ERROR! Invalid input");
@@ -567,7 +632,7 @@ public class Table extends JFrame {
                 Matcher matcher = pattern.matcher(text.getText());
 
                 if (matcher.find()) {
-                    filterRows(TFileData.SIZE, text.getText(), TFileData.DOWN);
+                    filterRows(TableFileData.SIZE, text.getText(), TableFileData.DOWN);
 		            frameWindow.setVisible(false);
                 } else {
                     frameWindow.setTitle("ERROR! Invalid input");
@@ -581,6 +646,9 @@ public class Table extends JFrame {
 		frameWindow.setVisible(true);
     }
 
+    /**
+     * Select which type of filter
+     * */
     private void filterRows (String type, String data, String order) {
         Pattern pattern = Pattern.compile("[a-zA-Z]");
         Matcher matcher = pattern.matcher(data);
@@ -590,32 +658,32 @@ public class Table extends JFrame {
             return;
         }
         
-        if (type.equals(TFileData.PERCENTAGE)) {
-            if (order.equals(TFileData.UP)) {
-                tdata.filterPercentage(Float.parseFloat(data), TFileData.UP);
+        if (type.equals(TableFileData.PERCENTAGE)) {
+            if (order.equals(TableFileData.UP)) {
+                tdata.filterPercentage(Float.parseFloat(data), TableFileData.UP);
                 table.updateUI();
-            } else if (order.equals(TFileData.DOWN)){
-                tdata.filterPercentage(Float.parseFloat(data), TFileData.DOWN);
-                table.updateUI();
-            } else
-                System.err.println("ERROR! Unknown type");
-            
-        } else if (type.equals(TFileData.NUMBER)) {
-            if (order.equals(TFileData.UP)) {
-                tdata.filterNumber(Long.valueOf(data), TFileData.UP);
-                table.updateUI();
-            } else if (order.equals(TFileData.DOWN)){
-                tdata.filterNumber(Long.valueOf(data), TFileData.DOWN);
+            } else if (order.equals(TableFileData.DOWN)){
+                tdata.filterPercentage(Float.parseFloat(data), TableFileData.DOWN);
                 table.updateUI();
             } else
                 System.err.println("ERROR! Unknown type");
             
-        } else if (type.equals(TFileData.SIZE)) {
-            if (order.equals(TFileData.UP)) {
-                tdata.filterSize(Long.valueOf(data), TFileData.UP);
+        } else if (type.equals(TableFileData.NUMBER)) {
+            if (order.equals(TableFileData.UP)) {
+                tdata.filterNumber(Long.valueOf(data), TableFileData.UP);
                 table.updateUI();
-            } else if (order.equals(TFileData.DOWN)){
-                tdata.filterSize(Long.valueOf(data), TFileData.DOWN);
+            } else if (order.equals(TableFileData.DOWN)){
+                tdata.filterNumber(Long.valueOf(data), TableFileData.DOWN);
+                table.updateUI();
+            } else
+                System.err.println("ERROR! Unknown type");
+            
+        } else if (type.equals(TableFileData.SIZE)) {
+            if (order.equals(TableFileData.UP)) {
+                tdata.filterSize(Long.valueOf(data), TableFileData.UP);
+                table.updateUI();
+            } else if (order.equals(TableFileData.DOWN)){
+                tdata.filterSize(Long.valueOf(data), TableFileData.DOWN);
                 table.updateUI();
             } else
                 System.err.println("ERROR! Unknown type");
@@ -625,6 +693,9 @@ public class Table extends JFrame {
         }
     }
 
+    /**
+     * Unfilter the Table, and update the GUI
+     * */
     private void unfilterRows () {
         tdata.unfilter();
         table.updateUI();

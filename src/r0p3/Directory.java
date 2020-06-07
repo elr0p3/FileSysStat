@@ -106,12 +106,19 @@ public class Directory {
     }
 
 
+    /**
+     * Symbolic link getter
+     *
+     * @return  a Set which contains symbolic links
+     * */
     public Set<String> getSymLinkContent () {
         return symlink_content;
     }
 
     /**
+     * Add a size to the total directory size
      *
+     * @param s     a Long
      * */
     public void addSize (Long s) {
         size += s;
@@ -139,33 +146,68 @@ public class Directory {
     }
 
 
+    /**
+     * Add a symbolic link to the symlink set
+     *
+     * @param name  the name of the symbolic link
+     * */
     public void addSymLink (String name) {
         this.symlink_content.add(name);
     }
 
+    /**
+     * Add a number of files
+     *
+     * @param newf  number of files to add
+     * */
     public void addFile (Integer newf) {
         files += newf;
         items += newf;
     }
 
+    /**
+     * File number getter
+     *
+     * @return  the number of files inside the directory
+     * */
     public Long getFile () {
         return files;
     }
 
+    /**
+     * Add a number of SubDirectories
+     *
+     * @param newd  number of subdirectories to add
+     * */
     public void addSubDir (Integer newd) {
         subdirs += newd;
         items += newd;
     }
 
+    /**
+     * SubDirectory number getter
+     *
+     * @return  the number of subdirectories inside the directory
+     * */
     public Long getSubDir () {
         return subdirs;
     }
 
+    /**
+     * Add a number of Symbolic Links
+     *
+     * @param newd  number of symbolic links to add
+     * */
     public void addSymLink (Integer newl) {
         symlink += newl;
         items += newl;
     }
 
+    /**
+     * Symbolic Link number getter
+     *
+     * @return  the number of symbolic links inside the directory
+     * */
     public Long getSymLink () {
         return symlink;
     }

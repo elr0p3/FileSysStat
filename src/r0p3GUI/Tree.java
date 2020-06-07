@@ -7,29 +7,46 @@ import javax.swing.tree.DefaultMutableTreeNode;
 
 import r0p3.Directory;
 
-public class TreeTable {
+public class Tree {
 
     private Directory root;
     private DefaultMutableTreeNode start;
 
-    private String[] columnNames = {PERCNT, SIZE, ITEMS, FILES, SUB_DIRS, SYM_LINK};
-    public static final String PERCNT = "Percentage";
-    public static final String SIZE = "Size";
-    public static final String ITEMS = "Items";
-    public static final String FILES = "Files";
-    public static final String SUB_DIRS = "SubDir";
-    public static final String SYM_LINK = "SymLink";
+    // private String[] columnNames = {PERCNT, SIZE, ITEMS, FILES, SUB_DIRS, SYM_LINK};
+    // public static final String PERCNT = "Percentage";
+    // public static final String SIZE = "Size";
+    // public static final String ITEMS = "Items";
+    // public static final String FILES = "Files";
+    // public static final String SUB_DIRS = "SubDir";
+    // public static final String SYM_LINK = "SymLink";
 
-    public TreeTable (Directory fs_dir) throws IOException {
+
+    /**
+     * Tree constructor
+     *
+     * @param fs_dir    a Directory node
+     * */
+    public Tree (Directory fs_dir) throws IOException {
         root = fs_dir;
         start = new DefaultMutableTreeNode(fs_dir.getPath().toRealPath().toString());
     }
 
+    /**
+     * Starts creating the Tree
+     *
+     * @return  the root DefaultMutableTreeNode node
+     * */
     public DefaultMutableTreeNode setTree () {
         completeTree(start, root);
         return start;
     }
 
+    /**
+     * Build the graphic tree
+     *
+     * @param actual    the actual DefaultMutableTreeNode node to be setted
+     * @param dir       the actual Directory node to be scanned
+     * */
     private void completeTree (DefaultMutableTreeNode actual, Directory dir) {
          
         for (Map.Entry<String, Long> entry : dir.getFilesContent().entrySet()) {

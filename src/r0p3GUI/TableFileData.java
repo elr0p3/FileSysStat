@@ -11,7 +11,7 @@ import javax.swing.table.TableModel;
 
 import r0p3.FileData;
 
-public class TFileData implements TableModel {
+public class TableFileData implements TableModel {
 
 	private List<FileData> fileData;
     private String[] columnNames = {EXTENTION, PERCENTAGE, NUMBER, SIZE};
@@ -25,16 +25,29 @@ public class TFileData implements TableModel {
     public static final String DOWN = "DOWN";
 
 
-
-	public TFileData () {
+    /**
+     * TableFileData constructor
+     * */
+	public TableFileData () {
 		fileData = new ArrayList<FileData>();
+        // Lo hice por un motivo que no recuerdo, solo recuerdo que petaba si no lo ponia
         auxData = fileData;
 	}
 
+    /**
+     * File Data list getter
+     *
+     * @return  a sorted List containing the File Data
+     * */
     public List<FileData> getTableData () {
         return fileData;
     }
 
+    /**
+     * File Data elements setter
+     *
+     * @param fd    a Map containing all the file data
+     * */
     public void setElements (Map<String, FileData> fd) {
         ArrayList<Long> sizes = new ArrayList<Long>();
 
@@ -54,6 +67,9 @@ public class TFileData implements TableModel {
         }
     }
 
+    /**
+     * Reverse the file data List
+     * */
     public void reverseElements () {
         Collections.reverse(fileData);
         // for (int i = 0; i < fileData.size(); i++) {
@@ -64,6 +80,11 @@ public class TFileData implements TableModel {
         // }
     }
 
+    /**
+     * Filter the file data by extension
+     *
+     * @param extension the file extension to be filtered
+     * */
     public void filterExtension (String extension) {
         if (auxData.size() == fileData.size())
             auxData = new ArrayList<FileData>(fileData);
@@ -76,6 +97,12 @@ public class TFileData implements TableModel {
 		}
     }
 
+    /**
+     * Filter the file data by percentage
+     *
+     * @param percentage    the file size percentage
+     * @param order         the order to be filtered
+     * */
     public void filterPercentage (Float percentage, String order) {
         if (auxData.size() == fileData.size())
             auxData = new ArrayList<FileData>(fileData);
@@ -89,6 +116,12 @@ public class TFileData implements TableModel {
 		}
     }
 
+    /**
+     * Filter the file data by number of files
+     *
+     * @param number        the file number
+     * @param order         the order to be filtered
+     * */
     public void filterNumber (Long number, String order) {
         if (auxData.size() == fileData.size())
             auxData = new ArrayList<FileData>(fileData);
@@ -102,6 +135,12 @@ public class TFileData implements TableModel {
 		}
     }
 
+    /**
+     * Filter the file data by size of files
+     *
+     * @param size          the file size
+     * @param order         the order to be filtered
+     * */
     public void filterSize (Long size, String order) {
         if (auxData.size() == fileData.size())
             auxData = new ArrayList<FileData>(fileData);
@@ -115,6 +154,9 @@ public class TFileData implements TableModel {
 		}
     }
 
+    /**
+     * Undo the filter to the normal state
+     * */
     public void unfilter () {
         fileData = new ArrayList<FileData>(auxData);
     }
@@ -169,7 +211,7 @@ public class TFileData implements TableModel {
 
 	@Override
 	public boolean isCellEditable(int rowIndex, int columnIndex) {
-		return true;
+		return false;
 	}
 
 	@Override

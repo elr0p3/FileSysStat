@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.io.BufferedReader;
-import java.io.FileWriter;
+// import java.io.FileWriter;
 import java.io.IOException; 
 import java.io.InputStreamReader; 
 
@@ -139,7 +139,9 @@ public class SystemFile {
     }
 
     /**
+     * Number of Symbolic Links getter
      *
+     * @return  number of symbolic links scanned
      * */
     public Long getLinks () {
         return link_num;
@@ -182,12 +184,20 @@ public class SystemFile {
         return free_space;
     }
 
-
+    /**
+     * Files data getter
+     *
+     * @return  a Map which contains the files data, key=String, value=FileData
+     * */
     public Map<String, FileData> getFileData () {
         return files_data;
     }
 
-
+    /**
+     * Directory Tree getter
+     *
+     * @return the root of the directory tree
+     * */
     public Directory getDirTree () {
         return dir_tree;
     }
@@ -215,6 +225,8 @@ public class SystemFile {
     /**
      * Allows you to loop through the file system recursively
      * It doesn't requires a String which represent the path, so it'll take the default start path
+     *
+     * @param enable_print directories and content are printed if true else not
      * */
     public void travelDirectories (boolean enable_print) throws IOException {
         travelDirectories(start_path_str, enable_print);
@@ -224,6 +236,7 @@ public class SystemFile {
      * Allows you to loop through the file system recursively
      *
      * @param   path    a String which represent the path to start scanning
+     * @param enable_print directories and content are printed if true else not
      * */
     public void travelDirectories (String path, boolean enable_print) throws IOException {
         // OJO CUIDAO CON ESTOS ERRORES
@@ -236,9 +249,8 @@ public class SystemFile {
         dir_tree = new Directory(start_path_str);
         directory_num++;
         scanned_space = walk(Paths.get(path), dir_tree, files_data, enable_print);
-        /*
-         * CACLULATE FILE PERCENTAGE
-         */
+
+        // Calcular el porcentaje de los archivos
         for (Map.Entry<String, FileData> entry : files_data.entrySet()) {
             Long size_f = entry.getValue().getSize();
             entry.getValue().calculateTotalSizePercentage(size_f, this.scanned_space);
@@ -247,6 +259,13 @@ public class SystemFile {
 
     /**
      * There is where all the magic of visiting directories happens
+     *
+     * @param path          the path of the directory to be scanned
+     * @param dir           the Directory node to store the data
+     * @param files_data    object to store the files data
+     * @param enable_print  directories and content are printed if true else not
+     * 
+     * @return  a Long which is the total scanned size
      * */
     private Long walk (Path path, Directory dir, Map<String, FileData> files_data, boolean enable_print) throws IOException {
         Path root = path;
@@ -295,6 +314,10 @@ public class SystemFile {
 
     /**
      * Helps walk() function to get the size of a file and store some files data
+     *
+     * @param path          the path of the file scanned
+     * @param dir           the Directory node to store the data
+     * @param files_data    object to store the files data
      * */
     private Long scanFile (Path f, Directory dir, Map<String, FileData> files_data) throws IOException {
         Long size = (long)Files.size(f);
@@ -355,7 +378,9 @@ public class SystemFile {
     }
 
     /**
+     * Prints a table to show the files data
      *
+     * @param limit the number of lines to be printed
      * */
     public void printFileData (Integer limit) {
         System.out.println("\n");
@@ -382,11 +407,19 @@ public class SystemFile {
     }
 
     /**
+     * Sort the files data, transform the Map into a List
      *
+     * @return  a List which contains the files data
      * */
     private List<FileData> sortFiles () {
         // Perdon por hacer esto, pero es lo que se me ocurre mas rapido
         // si en el futuro se me ocurre otra cosa ya lo hare
+        // |
+        // |
+        // Bueno....
+        // Han pasado unas semanas y no se me ha ocurrido nada, de hecho lo
+        // he vuelto a hacer en el archivo r0p3GUI/TableFileData.java
+        // porque soy debil
 
         ArrayList<Long> sizes = new ArrayList<Long>();
 
@@ -409,6 +442,9 @@ public class SystemFile {
         return aux;
     }
 
+    /**
+     * Print the line to separate data in printFileData()
+     * */
     private void printLine () {
         for (int i = 0; i < MAX_SPACE_PRINT; i++)
             System.out.print("-");
@@ -423,46 +459,47 @@ public class SystemFile {
 
     /**
      * Prints the data inside a specific directory
-     * Returns a Directory objetc, BUT IM NOT SHURE ABOUT IT
+     *
+     * @return  a Directory objetc, BUT IM NOT SHURE ABOUT IT
      * */
-    public Directory printDirectoryData () {
-        return null;
-    }
+    // public Directory printDirectoryData () {
+        // return null;
+    // }
 
     /**
      * Prints the data of a specific file
      *
      * @param   path    a Path objetc
      * */
-    public void printFileData (Path path) {
-        printFileData(path.toString());
-    }
+    // public void printFileData (Path path) {
+        // printFileData(path.toString());
+    // }
 
     /**
      * Prints the data of a specific file
      *
      * @param   path    a Strign which represents a path
      * */
-    public void printFileData (String path) {
+    // public void printFileData (String path) {
 
-    }
+    // }
 
     /**
      * Prints the content of a file
      *
      * @param   path    a Path objetc
      * */
-    public void readFile (Path path) {
-        readFile(path.toString());
-    }
+    // public void readFile (Path path) {
+        // readFile(path.toString());
+    // }
 
     /**
      * Prints the content of a file
      *
      * @param   path    a Strign which represents a path
      * */
-    public void readFile (String path) {
+    // public void readFile (String path) {
 
-    }
+    // }
 
 }

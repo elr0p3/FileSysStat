@@ -47,7 +47,6 @@ public class FileData {
         return extension;
     }
 
-
     /**
      * Number of files scanned getter
      *
@@ -57,6 +56,11 @@ public class FileData {
         return number;
     }
 
+    /**
+     * Number of files setter
+     *
+     * @param f     number of files
+     * */
     public void setNumberOfFiles (Long f) {
         number = f;
     }
@@ -91,12 +95,21 @@ public class FileData {
     }
 
     /**
+     * Human readable size getter, it comes with the unit
      *
+     * @return  a String with the formated size
      * */
     public String getSizeUnit () {
         return getSizeUnit(this.size);
     }
 
+    /**
+     * Human readable size getter, it comes with the unit
+     * And it let us transform an entered value
+     *
+     * @param zs    the size to be transformed
+     * @return  a String with the formated size
+     * */
     public static String getSizeUnit (Long sz) {
         Float value = 0f;
 
@@ -105,20 +118,36 @@ public class FileData {
         
         value = sz / 1024f;
         if (value < 1024)
-            return value.toString() + " KB";
+            return value.toString() + " KiB";
 
         value = value / 1024f;
         if (value < 1024)
-            return value.toString() + " MB";
+            return value.toString() + " MiB";
 
         value = value / 1024f;
         if (value < 1024)
-            return value.toString() + " GB";
+            return value.toString() + " GiB";
 
         value = value / 1024f;
         if (value < 1024)
-            return value.toString() + " TB";
+            return value.toString() + " TiB";
 
+        value = value / 1024f;
+        if (value < 1024)
+            return value.toString() + " PiB";
+
+        value = value / 1024f;
+        if (value < 1024)
+            return value.toString() + " EiB";
+        
+        value = value / 1024f;
+        if (value < 1024)
+            return value.toString() + " ZiB";
+
+        value = value / 1024f;
+        if (value < 1024)
+            return value.toString() + " YiB";
+        
         return sz.toString() + " B";
     }
 
@@ -141,6 +170,11 @@ public class FileData {
         return percentage;
     }
 
+    /**
+     * File percentage formated getter
+     *
+     * @return  a String which represents the file percentage
+     * */
     public String getPercentageFormat () {
         DecimalFormat df = new DecimalFormat("#.###");
         df.setRoundingMode(RoundingMode.CEILING);
