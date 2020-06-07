@@ -7,8 +7,9 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
-public class LoadScreen extends JFrame {
+public class LoadScreen extends JFrame implements Runnable {
 
+    static final long serialVersionUID = 0l;
     JPanel panel;
     JLabel label;
     ImageIcon loading;
@@ -16,7 +17,7 @@ public class LoadScreen extends JFrame {
     public LoadScreen () {
         panel = new JPanel();
         label = new JLabel();
-        loading = new ImageIcon(System.getProperty("user.dir") + "/gif/java.jpg");
+        loading = new ImageIcon(System.getProperty("user.dir") + "/gif/loading.gif");
     }
 
     public void createAndShowGUI () {
@@ -31,6 +32,10 @@ public class LoadScreen extends JFrame {
 
     public void close () {
         setVisible(false);
+    }
+
+    public void run() {
+        createAndShowGUI();
     }
 
     // public static void main (String[] argv) {
