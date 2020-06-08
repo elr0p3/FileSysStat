@@ -1,19 +1,28 @@
 package r0p3GUI;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.ComponentOrientation;
+import java.awt.Cursor;
+import java.awt.Desktop;
 import java.awt.Dimension;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.awt.FlowLayout;
+import java.awt.Font;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.Map;
 import java.awt.GridBagConstraints;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JFileChooser;
@@ -40,13 +49,18 @@ public class Window extends JFrame {
 
     // porque sino se me queja
     private static final long serialVersionUID = 1L;
+
+    public static final String AUTHOR_NAME  = "Rodrigo Pereira";
+    public static final String PROJECT_NAME = "FileSysStat";
+    public static final String PROJECT_VERS = "v1.0.1-e5f3950c96";
+    public static final String SOURCE_CODE  = "https://github.com/elr0p3/FileSysStat";
     
     private JFileChooser chooser;
     private JMenuBar menubar;
-    private JMenu file, window, filter;
+    private JMenu file, window, filter, help;
     private JMenuItem reverse, treeB, tableB, graphB,
             extensionB, percentageB, numberB, sizeB, unfilterB,
-            export;
+            export, about;
     private JTree fileSysTree;
     // private DefaultMutableTreeNode root;
 
@@ -65,6 +79,12 @@ public class Window extends JFrame {
     private Map<String, Long> used;
 
 
+    /**
+     * Window constructor
+     * */
+    public Window () {
+        this(PROJECT_NAME);
+    }
 
     /**
      * Window constructor
@@ -79,6 +99,7 @@ public class Window extends JFrame {
         // file.setFont(new Font("Sf Mono", Font.PLAIN, 15));
         window = new JMenu("Window");
         filter = new JMenu("Filter");
+        help   = new JMenu("Help");
         tableB  = new JMenuItem("Table");
         treeB   = new JMenuItem("Tree");
         graphB  = new JMenuItem("Graph");
@@ -89,6 +110,7 @@ public class Window extends JFrame {
         sizeB       = new JMenuItem("Size");
         unfilterB   = new JMenuItem("Unfilter");
         export = new JMenuItem("Export");
+        about = new JMenuItem("About");
         tdata = new TableFileData();
     }
 
@@ -173,6 +195,7 @@ public class Window extends JFrame {
     private JMenuBar setMenu (Map<String, Long> total, Map<String, Long> used) 
             throws IOException {
         menubar.add(file);
+        file.add(export);
         
         menubar.add(window);
         window.add(tableB);
@@ -187,7 +210,28 @@ public class Window extends JFrame {
         filter.add(sizeB);
         filter.add(unfilterB);
         
-        menubar.add(export);
+        menubar.add(help);
+        help.add(about);
+
+        file.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        export.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+
+        window.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        tableB.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        treeB.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        graphB.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        reverse.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+
+        filter.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        extensionB.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        percentageB.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        numberB.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        sizeB.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        unfilterB.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+
+        help.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        about.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+
 
         tableB.addActionListener(new ActionListener() {
 			
@@ -278,6 +322,14 @@ public class Window extends JFrame {
 			}
 		});
 
+        about.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+                displayInfo();
+			}
+		});
+
         return menubar;
     }
 
@@ -314,6 +366,96 @@ public class Window extends JFrame {
         JDialog frameWindow = new JDialog();
 
         frameWindow.add(graphZone(total, used));
+        frameWindow.pack();
+		frameWindow.setVisible(true);
+    }
+
+    /**
+     * Display information about the program
+     * */
+    private void displayInfo () {
+        JDialog frameWindow = new JDialog();
+        frameWindow.setTitle("About FileSysStat");
+        frameWindow.setResizable(false);
+
+        JPanel panel = new JPanel();
+        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+
+        JLabel[] l_format = new JLabel[4];
+        for (int i = 0; i < 4; i++)
+            l_format[i] = new JLabel("                                     ");
+        JTextField project_name = new JTextField(Window.PROJECT_NAME);
+        JTextField project_vers = new JTextField(Window.PROJECT_VERS);
+        JTextField author       = new JTextField(Window.AUTHOR_NAME);
+
+        // JLabel hyperlink = new JLabel("Visit the source code in GitHub", SwingConstants.CENTER);
+        JTextField hyperlink = new JTextField("Visit the source code in GitHub");
+        hyperlink.setForeground(Color.BLUE.darker());
+        hyperlink.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        hyperlink.addMouseListener(new MouseAdapter() {
+ 
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                // the user clicks on the label
+                try {
+                    Desktop.getDesktop().browse(new URI(Window.SOURCE_CODE));
+                } catch (IOException | URISyntaxException e1) {
+                    e1.printStackTrace();
+                }
+            }
+ 
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                // the mouse has entered the label
+            }
+ 
+            @Override
+            public void mouseExited(MouseEvent e) {
+                // the mouse has exited the label
+            }
+        });
+
+
+        // Format text
+        project_name.setFont(new Font("SansSerif", Font.BOLD, 20));
+        project_name.setHorizontalAlignment(JTextField.CENTER);
+        project_vers.setFont(new Font("SansSerif", Font.BOLD, 10));
+        project_vers.setHorizontalAlignment(JTextField.CENTER);
+        author.setFont(new Font("SansSerif", Font.PLAIN, 12));
+        author.setHorizontalAlignment(JTextField.CENTER);
+        hyperlink.setFont(new Font("SansSerif", Font.CENTER_BASELINE, 14));
+        hyperlink.setHorizontalAlignment(JTextField.CENTER);
+        
+        // Not edit the text
+        project_name.setEditable(false);
+        project_vers.setEditable(false);
+        author.setEditable(false);
+        hyperlink.setEditable(false);
+
+        // Same as JLabel
+        project_name.setBackground(null);
+        project_vers.setBackground(null);
+        author.setBackground(null);
+        hyperlink.setBackground(null);
+        
+        // Remove the border
+        project_name.setBorder(null);
+        project_vers.setBorder(null);
+        author.setBorder(null);
+        hyperlink.setBorder(null);
+
+        // Add to panel
+        panel.add(l_format[0]);
+        panel.add(project_name);
+        panel.add(project_vers);
+        panel.add(l_format[1]);
+        panel.add(author);
+        panel.add(l_format[2]);
+        panel.add(hyperlink);
+        panel.add(l_format[3]);
+
+
+        frameWindow.add(panel);
         frameWindow.pack();
 		frameWindow.setVisible(true);
     }
@@ -440,6 +582,7 @@ public class Window extends JFrame {
     private void getExtensionFilter () {
         JDialog frameWindow = new JDialog();
         frameWindow.setTitle("Extension Filter");
+        frameWindow.setResizable(false);
         JPanel panel = new JPanel(new FlowLayout());
         JLabel label = new JLabel("Introduce the file extension: ");
         JTextField text = new JTextField();
@@ -483,6 +626,7 @@ public class Window extends JFrame {
     private void getPercentageFilter () {
         JDialog frameWindow = new JDialog();
         frameWindow.setTitle("Percentage Filter");
+        frameWindow.setResizable(false);
         JPanel panel = new JPanel(new GridLayout(2, 1));
         JLabel label = new JLabel("Introduce the percentage: ");
         JTextField text = new JTextField();
@@ -540,6 +684,7 @@ public class Window extends JFrame {
     private void getNumberFilter () {
         JDialog frameWindow = new JDialog();
         frameWindow.setTitle("File Number Filter");
+        frameWindow.setResizable(false);
         JPanel panel = new JPanel(new GridLayout(2, 1));
         JLabel label = new JLabel("Introduce the file number: ");
         JTextField text = new JTextField();
@@ -596,8 +741,9 @@ public class Window extends JFrame {
     private void getSizeFilter () {
         JDialog frameWindow = new JDialog();
         frameWindow.setTitle("File Size Filter");
+        frameWindow.setResizable(false);
         JPanel panel = new JPanel(new GridLayout(2, 1));
-        JLabel label = new JLabel("Introduce the file size: ");
+        JLabel label = new JLabel("Introduce the file size (in Bytes): ");
         JTextField text = new JTextField();
         JButton buttonU = new JButton("Upper");
         JButton buttonL = new JButton("Lower");

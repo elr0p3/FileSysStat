@@ -1,6 +1,7 @@
 package r0p3GUI;
 
 import java.awt.BorderLayout;
+import java.awt.Dimension;
 
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
@@ -27,12 +28,15 @@ public class LoadScreen extends JFrame implements Runnable {
      * Create and show the GUI
      * */
     public void createAndShowGUI () {
-        setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
+        // setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
         label.setIcon(loading);
         add(label, BorderLayout.CENTER);
 		
-        pack();
+        // pack();
+        setSize(new Dimension(loading.getIconWidth(), loading.getIconHeight()));
+        setResizable(false);
 		setVisible(true);
     }
     

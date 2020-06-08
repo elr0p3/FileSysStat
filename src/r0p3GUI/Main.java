@@ -7,9 +7,9 @@ import r0p3.SystemFile;
 public class Main {
 
     public static void main (String [] argv) throws IOException {
-        Window tbl = new Window("File System Stats");
+        Window tbl = new Window("FileSysStat");
         SystemFile fs = new SystemFile();
-        LoadScreen lds = new LoadScreen("LOADING..."); 
+        LoadScreen lds = new LoadScreen("FileSysStat LOADING..."); 
         Thread thrd = new Thread(lds);  // No es necesario, pero pruebo multithreading
 
         String path = tbl.selectDirectory();
