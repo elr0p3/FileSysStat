@@ -143,6 +143,7 @@ public class Window extends JFrame {
      * */
      private String createFile () throws IOException {
         File file = null;
+        String default_name = "Table_Data.txt";
         chooser.setCurrentDirectory(new java.io.File("."));
         chooser.setDialogTitle("Directory Chooser");
         chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
@@ -154,13 +155,21 @@ public class Window extends JFrame {
             // file = new File(chooser.getSelectedFile() + "/saved_data.txt");
             file = chooser.getSelectedFile();
             if (file.getName().equals(".")) {
-                System.err.println("ERROR! Wrong file name");
+                String aux = file.getPath();
+                aux = aux.substring(0, aux.length() - 1);
+                aux += default_name;
+                file = new File(aux);
+            }
+            if (file.isDirectory())
+                file = new File(file.getPath() + "/" + default_name);
+            else if (file.exists()) {
+                System.err.println("ERROR! The file already exists");
                 return null;
             }
             if (!file.createNewFile())
                 System.err.println("ERROR! Cannot create the file");
-            System.out.println("PATH -> " + file.getPath().toString());
-            return file.getPath().toString();
+            System.out.println("PATH -> " + file.getPath());
+            return file.getPath();
         }
         System.out.println("No Selection ");
         return null;
