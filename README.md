@@ -3,14 +3,14 @@
 </div>
 
 
-## File System Statistics (OOP project)
+# File System Statistics (OOP project)
 
 
-# To run the program
+## To run the program
 Type 'make && make grun' inside the current project.
 
 
-# Description
+## Description
 Scan the filesystem to obtain information, such as:
 
 - the directories inside other ones, and their corresponding files
