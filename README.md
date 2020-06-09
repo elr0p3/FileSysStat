@@ -7,7 +7,7 @@
 
 
 ## To run the program
-Type 'make && make grun' inside the current project.
+Type `make && make grun` inside the current project.
 
 
 ## Description
@@ -27,8 +27,8 @@ Files data can be filtered and exported into a file to store them.
 
 TUI version is disabled by default.
 
-To run it you should run 'mv src/r0p3/Main.java.old src/r0p3/Main.java'.
-Then type 'make tui && make run' inside the current project.
+To run it you should run `mv src/r0p3/Main.java.old src/r0p3/Main.java`.
+Then type `make tui && make run` inside the current project.
 
 
 GUI version is the default one.
