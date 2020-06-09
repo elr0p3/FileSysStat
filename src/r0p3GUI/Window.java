@@ -52,7 +52,7 @@ public class Window extends JFrame {
 
     public static final String AUTHOR_NAME  = "Rodrigo Pereira";
     public static final String PROJECT_NAME = "FileSysStat";
-    public static final String PROJECT_VERS = "v1.0.2-8af5a976a3";
+    public static final String PROJECT_VERS = "v1.0.2-dcbcac85e1";
     public static final String SOURCE_CODE  = "https://github.com/elr0p3/FileSysStat";
     
     private JFileChooser chooser;
@@ -652,7 +652,10 @@ public class Window extends JFrame {
 			
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-                Pattern pattern = Pattern.compile("[0-9](\\.[0-9]+)?");
+                Pattern pattern = Pattern.compile("([0-9]*[.])?[0-9]+");
+                // Por algun motivo este patron hace match con '3.' o '3%'
+                // entre otras cadenas absurdas, pero llevo demasiado tiempo
+                // aqui, asi que paso
                 Matcher matcher = pattern.matcher(text.getText());
 
                 if (matcher.find()) {
@@ -669,7 +672,10 @@ public class Window extends JFrame {
 			
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-                Pattern pattern = Pattern.compile("[0-9](\\.[0-9]+)?");
+                Pattern pattern = Pattern.compile("([0-9]*[.])?[0-9]+");
+                // Por algun motivo este patron hace match con '3.' o '3%'
+                // entre otras cadenas absurdas, pero llevo demasiado tiempo
+                // aqui, asi que paso
                 Matcher matcher = pattern.matcher(text.getText());
 
                 if (matcher.find()) {
@@ -709,7 +715,7 @@ public class Window extends JFrame {
 			
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-                Pattern pattern = Pattern.compile("[0-9](\\.[0-9]+)?");
+                Pattern pattern = Pattern.compile("[0-9]+");
                 Matcher matcher = pattern.matcher(text.getText());
 
                 if (matcher.find()) {
@@ -726,7 +732,7 @@ public class Window extends JFrame {
 			
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-                Pattern pattern = Pattern.compile("[0-9](\\.[0-9]+)?");
+                Pattern pattern = Pattern.compile("[0-9]+");
                 Matcher matcher = pattern.matcher(text.getText());
 
                 if (matcher.find()) {
@@ -766,7 +772,7 @@ public class Window extends JFrame {
 			
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-                Pattern pattern = Pattern.compile("[0-9](\\.[0-9]+)?");
+                Pattern pattern = Pattern.compile("[0-9]+");
                 Matcher matcher = pattern.matcher(text.getText());
 
                 if (matcher.find()) {
@@ -783,7 +789,7 @@ public class Window extends JFrame {
 			
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-                Pattern pattern = Pattern.compile("[0-9](\\.[0-9]+)?");
+                Pattern pattern = Pattern.compile("[0-9]+");
                 Matcher matcher = pattern.matcher(text.getText());
 
                 if (matcher.find()) {
