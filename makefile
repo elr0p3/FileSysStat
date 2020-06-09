@@ -1,4 +1,4 @@
-.PHONI := all gui grun gclean tui run clean
+.PHONI := all gui run gclean tui trun clean
 
 all : gui
 
@@ -6,18 +6,18 @@ all : gui
 gui :
 	javac -classpath ./src/  src/**/*.java -d ./build
 
-grun :
+run :
 	java -classpath ./build/ r0p3GUI.Main
 
 gclean :
-	rm -rf ./build/
+	rm -rf ./build/*
 
 
 tui :
 	javac src/r0p3/*.java -d ./bin
 
-run :
+trun :
 	java -classpath ./bin/ r0p3.Main
 
 clean :
-	rm -rf ./bin/
+	rm -rf ./bin/*
