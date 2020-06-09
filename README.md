@@ -27,8 +27,7 @@ Files data can be filtered and exported into a file to store them.
 
 TUI version is disabled by default.
 
-To run it you should uncoment some lines inside the makefile,
-and 'mv src/r0p3/Main.java.old src/r0p3/Main.java'.
+To run it you should run 'mv src/r0p3/Main.java.old src/r0p3/Main.java'.
 Then type 'make tui && make run' inside the current project.
 
 
