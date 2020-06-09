@@ -52,7 +52,7 @@ public class Window extends JFrame {
 
     public static final String AUTHOR_NAME  = "Rodrigo Pereira";
     public static final String PROJECT_NAME = "FileSysStat";
-    public static final String PROJECT_VERS = "v1.0.2-039b2f522c";
+    public static final String PROJECT_VERS = "v1.0.2-8af5a976a3";
     public static final String SOURCE_CODE  = "https://github.com/elr0p3/FileSysStat";
     
     private JFileChooser chooser;
