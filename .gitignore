@@ -28,3 +28,5 @@ dnwld
 *.test
 *.py
 *.data
+./gif/old/
+./test/
