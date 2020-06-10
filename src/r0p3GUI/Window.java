@@ -10,8 +10,11 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.FlowLayout;
 import java.awt.Font;
+// import java.awt.Graphics2D;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
+// import java.awt.image.BufferedImage;
+// import javax.imageio.ImageIO;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -52,7 +55,7 @@ public class Window extends JFrame {
 
     public static final String AUTHOR_NAME  = "Rodrigo Pereira";
     public static final String PROJECT_NAME = "FileSysStat";
-    public static final String PROJECT_VERS = "v1.0.2-8dd02e572f";
+    public static final String PROJECT_VERS = "v1.0.3-90484dcf5e";
     public static final String SOURCE_CODE  = "https://github.com/elr0p3/FileSysStat";
     
     private JFileChooser chooser;
@@ -60,7 +63,7 @@ public class Window extends JFrame {
     private JMenu file, window, filter, help;
     private JMenuItem reverse, treeB, tableB, graphB,
             extensionB, percentageB, numberB, sizeB, unfilterB,
-            export, about;
+            exportTable, exportTree, about; // exportGraph
     private JTree fileSysTree;
     // private DefaultMutableTreeNode root;
 
@@ -109,7 +112,9 @@ public class Window extends JFrame {
         numberB     = new JMenuItem("Number");
         sizeB       = new JMenuItem("Size");
         unfilterB   = new JMenuItem("Unfilter");
-        export = new JMenuItem("Export");
+        exportTable = new JMenuItem("Export Table");
+        exportTree  = new JMenuItem("Export Tree");
+        // exportGraph = new JMenuItem("Export Graph");
         about = new JMenuItem("About");
         tdata = new TableFileData();
     }
@@ -141,9 +146,9 @@ public class Window extends JFrame {
      *  
      *  @return     the path where it start scanning
      * */
-     private String createFile () throws IOException {
+     private String createFile (String ext) throws IOException {
         File file = null;
-        String default_name = "Table_Data.txt";
+        String default_name = "Data" + ext;
         chooser.setCurrentDirectory(new java.io.File("."));
         chooser.setDialogTitle("Directory Chooser");
         chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
@@ -187,7 +192,7 @@ public class Window extends JFrame {
         used = sf.getPartitionUsed();
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
-        add(setMenu(total, used), BorderLayout.NORTH);
+        add(setMenu(sf, total, used), BorderLayout.NORTH);
         add(addComponentsToPane(), BorderLayout.CENTER);
         add(graphZone(total, used), BorderLayout.SOUTH);
 		
@@ -201,10 +206,13 @@ public class Window extends JFrame {
      * @param total total data
      * @param used  used data
      * */
-    private JMenuBar setMenu (Map<String, Long> total, Map<String, Long> used) 
+    private JMenuBar setMenu (SystemFile sf, 
+            Map<String, Long> total, Map<String, Long> used) 
             throws IOException {
         menubar.add(file);
-        file.add(export);
+        file.add(exportTree);
+        file.add(exportTable);
+        // file.add(exportGraph);
         
         menubar.add(window);
         window.add(tableB);
@@ -223,7 +231,7 @@ public class Window extends JFrame {
         help.add(about);
 
         file.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-        export.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        exportTable.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 
         window.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         tableB.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
@@ -319,17 +327,42 @@ public class Window extends JFrame {
 			}
 		});
 
-        export.addActionListener(new ActionListener() {
+        exportTable.addActionListener(new ActionListener() {
 			
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
                 try {
-                    exportData();
+                    exportDataTable();
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
 			}
 		});
+
+        exportTree.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+                try {
+                    exportDataTree(sf);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+			}
+		});
+
+        // exportGraph.addActionListener(new ActionListener() {
+			
+			// @Override
+			// public void actionPerformed(ActionEvent arg0) {
+                // try {
+                    // exportDataGraph(total, used);
+                // } catch (IOException e) {
+                    // e.printStackTrace();
+                // }
+			// }
+		// });
+
 
         about.addActionListener(new ActionListener() {
 			
@@ -383,6 +416,7 @@ public class Window extends JFrame {
      * Display information about the program
      * */
     private void displayInfo () {
+        // https://www.codejava.net/java-se/swing/how-to-create-hyperlink-with-jlabel-in-java-swing
         JDialog frameWindow = new JDialog();
         frameWindow.setTitle("About FileSysStat");
         frameWindow.setResizable(false);
@@ -567,8 +601,8 @@ public class Window extends JFrame {
     /**
      * Exports file data to a file, which will be create
      * */
-    private void exportData () throws IOException {
-        String path = createFile(); 
+    private void exportDataTable () throws IOException {
+        String path = createFile(".txt"); 
         if (path != null) {
             FileWriter file = new FileWriter(path, true);
             for (FileData f : tdata.getTableData()) {
@@ -582,6 +616,66 @@ public class Window extends JFrame {
             file.close();
         } else {
             System.err.println("ERROR! Cannot access the dir");
+        }
+    }
+
+    /**
+     *
+     * */
+    // private void exportDataGraph (Map<String, Long> total, Map<String, Long> used)
+            // throws IOException {
+        // String path = createFile(".jpg");
+        // if (path != null) {
+            // // JPanel paintPane = graphZone(total, used);
+            // JPanel paintPane = new JPanel();
+            // JButton button = new JButton("tonto el que lo lea");
+            // paintPane.add(button);
+            // paintPane.setSize(new Dimension(300, 300));
+            // add(button, BorderLayout.WEST);
+            // BufferedImage image = new BufferedImage(
+                    // paintPane.getWidth(), paintPane.getHeight(),
+                    // BufferedImage.TYPE_INT_RGB);
+            // Graphics2D g = image.createGraphics();
+            // paintPane.printAll(g);
+            // g.dispose();
+            // try {
+                // ImageIO.write(image, "jpg", new File(path));
+            // } catch (IOException e) {
+                // e.printStackTrace();
+            // }
+        // } else {
+            // System.err.println("ERROR! Cannot create the file");
+        // }
+    // }
+
+    /**
+     * Export Tree data into a file
+     *
+     * @param sf    SystemFile object
+     * */
+    private void exportDataTree (SystemFile sf) throws IOException {
+        String path = createFile(".txt"); 
+        if (path != null) {
+            FileWriter file = new FileWriter(path, true);
+            storeFileSystem(sf.getDirTree(), file);
+            file.close();
+        } else {
+            System.err.println("ERROR! Cannot access the dir");
+        }
+    }
+
+    /**
+     * Write inside a file the tree representing the system file scanned
+     *
+     * @param dir   Directory object
+     * */
+    private void storeFileSystem (Directory dir, FileWriter file) throws IOException {
+        file.append(dir.getPath().toString() + "-->" + dir.getSizeContent() + "\n");
+        for (Map.Entry<String, Long> iterator : dir.getFilesContent().entrySet()) {
+           file.append(iterator.getKey() + "-->" + iterator.getValue() + "\n");
+        }
+        for (Directory next_dir : dir.getDirsContent()){
+            storeFileSystem(next_dir, file);
         }
     }
 
