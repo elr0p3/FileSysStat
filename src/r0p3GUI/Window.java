@@ -55,21 +55,24 @@ public class Window extends JFrame {
 
     public static final String AUTHOR_NAME  = "Rodrigo Pereira";
     public static final String PROJECT_NAME = "FileSysStat";
-    public static final String PROJECT_VERS = "v1.0.3-90484dcf5e";
+    public static final String PROJECT_VERS = "v1.0.3-0f46d04b56";
     public static final String SOURCE_CODE  = "https://github.com/elr0p3/FileSysStat";
     
     private JFileChooser chooser;
     private JMenuBar menubar;
     private JMenu file, window, filter, help;
-    private JMenuItem reverse, treeB, tableB, graphB,
+    private JMenuItem reverse, treeB, tableB, graphB, dirContentB,
             extensionB, percentageB, numberB, sizeB, unfilterB,
             exportTable, exportTree, about; // exportGraph
     private JTree fileSysTree;
     // private DefaultMutableTreeNode root;
 
-    private JTable table;
-    private TableFileData tdata;
-    private Tree ttable;
+    private JTable totalTable;
+    private TableFileData fdataTable;
+
+    private JTable contentTable;
+    private TableDirContent dirTable;
+    private Tree treeFS;
 
     private JLabel[] partition_name;
     private JProgressBar[] partition_sizeBars;
@@ -103,10 +106,13 @@ public class Window extends JFrame {
         window = new JMenu("Window");
         filter = new JMenu("Filter");
         help   = new JMenu("Help");
-        tableB  = new JMenuItem("Table");
-        treeB   = new JMenuItem("Tree");
-        graphB  = new JMenuItem("Graph");
-        reverse = new JMenuItem("Reverse");
+        
+        tableB      = new JMenuItem("Table");
+        dirContentB = new JMenuItem("Directory Content");
+        treeB       = new JMenuItem("Tree");
+        graphB      = new JMenuItem("Graph");
+        reverse     = new JMenuItem("Reverse");
+
         extensionB  = new JMenuItem("Extension");
         percentageB = new JMenuItem("Percentage");
         numberB     = new JMenuItem("Number");
@@ -116,7 +122,9 @@ public class Window extends JFrame {
         exportTree  = new JMenuItem("Export Tree");
         // exportGraph = new JMenuItem("Export Graph");
         about = new JMenuItem("About");
-        tdata = new TableFileData();
+        
+        fdataTable  = new TableFileData();
+        dirTable    = new TableDirContent();
     }
 
 
@@ -216,6 +224,7 @@ public class Window extends JFrame {
         
         menubar.add(window);
         window.add(tableB);
+        window.add(dirContentB);
         window.add(treeB);
         window.add(graphB);
         window.add(reverse);
@@ -258,6 +267,14 @@ public class Window extends JFrame {
 			}
 		});
 
+        dirContentB.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+                dirContentWindow();
+			}
+		});
+
         treeB.addActionListener(new ActionListener() {
 			
 			@Override
@@ -282,8 +299,8 @@ public class Window extends JFrame {
 			
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-                tdata.reverseElements();
-                table.updateUI();
+                fdataTable.reverseElements();
+                totalTable.updateUI();
 			}
 		});
 
@@ -381,7 +398,19 @@ public class Window extends JFrame {
     private void tableWindow () {
         JDialog frameWindow = new JDialog();
 
-        JTable new_table = new JTable(setFileDataTable());
+        JTable new_table = new JTable(fdataTable);
+        frameWindow.add(new JScrollPane(new_table));
+        frameWindow.pack();
+		frameWindow.setVisible(true);
+    }
+
+    /**
+     * Creates a new window containing the directory content
+     * */
+    private void dirContentWindow () {
+        JDialog frameWindow = new JDialog();
+
+        JTable new_table = new JTable(dirTable);
         frameWindow.add(new JScrollPane(new_table));
         frameWindow.pack();
 		frameWindow.setVisible(true);
@@ -562,8 +591,13 @@ public class Window extends JFrame {
         // gbc.weightx = 1.0;
         gbc.gridx = 1;
         gbc.gridy = 0;
-        table = new JTable(setFileDataTable());
-        panel.add(new JScrollPane(table), gbc);
+        contentTable = new JTable(setDirContentTable());
+        panel.add(new JScrollPane(contentTable), gbc);
+
+        gbc.gridx = 2;
+        gbc.gridy = 0;
+        totalTable = new JTable(setFileDataTable());
+        panel.add(new JScrollPane(totalTable), gbc);
 
         // gbc.fill = GridBagConstraints.HORIZONTAL;
         // gbc.gridx = 0;
@@ -582,8 +616,8 @@ public class Window extends JFrame {
         // root = new DefaultMutableTreeNode(pathToStart);
         // DefaultMutableTreeNode otro = new DefaultMutableTreeNode("Maricon");
         // root.add(otro);
-        ttable = new Tree(fs_dir);
-        fileSysTree = new JTree(ttable.setTree());
+        treeFS = new Tree(fs_dir);
+        fileSysTree = new JTree(treeFS.setTree());
 
         return fileSysTree;
     }
@@ -594,8 +628,18 @@ public class Window extends JFrame {
      * @return  a TableFileData object
      * */
     private TableFileData setFileDataTable () {
-        tdata.setElements(fileData);
-        return tdata;
+        fdataTable.setElements(fileData);
+        return fdataTable;
+    }
+
+    /**
+     * Set the Dir Table content
+     *
+     * @return  a TableDirContent object
+     * */
+    public TableDirContent setDirContentTable () {
+        dirTable.setElements(fs_dir);
+        return dirTable;
     }
 
     /**
@@ -605,7 +649,7 @@ public class Window extends JFrame {
         String path = createFile(".txt"); 
         if (path != null) {
             FileWriter file = new FileWriter(path, true);
-            for (FileData f : tdata.getTableData()) {
+            for (FileData f : fdataTable.getTableData()) {
                 file.append("EXTENSION:" + f.getExtension() + "\n");
                 // file.append("PERCENTAGE:" + String.format("%.16f", f.getPercentage()) + "\n");
                 file.append("PERCENTAGE:" + f.getPercentage().toString() + "\n");
@@ -716,8 +760,8 @@ public class Window extends JFrame {
     private void filterRows (String data) {
 
         if (data != null) {
-            tdata.filterExtension(data);
-            table.updateUI();
+            fdataTable.filterExtension(data);
+            totalTable.updateUI();
         } else {
             System.err.println("ERROR! Unknown type");
         }
@@ -915,31 +959,31 @@ public class Window extends JFrame {
         
         if (type.equals(TableFileData.PERCENTAGE)) {
             if (order.equals(TableFileData.UP)) {
-                tdata.filterPercentage(Float.parseFloat(data), TableFileData.UP);
-                table.updateUI();
+                fdataTable.filterPercentage(Float.parseFloat(data), TableFileData.UP);
+                totalTable.updateUI();
             } else if (order.equals(TableFileData.DOWN)){
-                tdata.filterPercentage(Float.parseFloat(data), TableFileData.DOWN);
-                table.updateUI();
+                fdataTable.filterPercentage(Float.parseFloat(data), TableFileData.DOWN);
+                totalTable.updateUI();
             } else
                 System.err.println("ERROR! Unknown type");
             
         } else if (type.equals(TableFileData.NUMBER)) {
             if (order.equals(TableFileData.UP)) {
-                tdata.filterNumber(Long.valueOf(data), TableFileData.UP);
-                table.updateUI();
+                fdataTable.filterNumber(Long.valueOf(data), TableFileData.UP);
+                totalTable.updateUI();
             } else if (order.equals(TableFileData.DOWN)){
-                tdata.filterNumber(Long.valueOf(data), TableFileData.DOWN);
-                table.updateUI();
+                fdataTable.filterNumber(Long.valueOf(data), TableFileData.DOWN);
+                totalTable.updateUI();
             } else
                 System.err.println("ERROR! Unknown type");
             
         } else if (type.equals(TableFileData.SIZE)) {
             if (order.equals(TableFileData.UP)) {
-                tdata.filterSize(Long.valueOf(data), TableFileData.UP);
-                table.updateUI();
+                fdataTable.filterSize(Long.valueOf(data), TableFileData.UP);
+                totalTable.updateUI();
             } else if (order.equals(TableFileData.DOWN)){
-                tdata.filterSize(Long.valueOf(data), TableFileData.DOWN);
-                table.updateUI();
+                fdataTable.filterSize(Long.valueOf(data), TableFileData.DOWN);
+                totalTable.updateUI();
             } else
                 System.err.println("ERROR! Unknown type");
             
@@ -952,8 +996,8 @@ public class Window extends JFrame {
      * Unfilter the Table, and update the GUI
      * */
     private void unfilterRows () {
-        tdata.unfilter();
-        table.updateUI();
+        fdataTable.unfilter();
+        totalTable.updateUI();
     }
 
 }
