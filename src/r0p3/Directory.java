@@ -212,4 +212,8 @@ public class Directory {
         return symlink;
     }
 
+    public String toString () {
+        return this.name;
+    }
+
 }

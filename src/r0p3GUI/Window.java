@@ -41,6 +41,8 @@ import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.JTree;
 // import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.event.TreeSelectionEvent;
+import javax.swing.event.TreeSelectionListener;
 
 import java.util.regex.*;
 
@@ -55,7 +57,7 @@ public class Window extends JFrame {
 
     public static final String AUTHOR_NAME  = "Rodrigo Pereira";
     public static final String PROJECT_NAME = "FileSysStat";
-    public static final String PROJECT_VERS = "v1.0.3-0f46d04b56";
+    public static final String PROJECT_VERS = "v1.0.3-1c1a8f2886";
     public static final String SOURCE_CODE  = "https://github.com/elr0p3/FileSysStat";
     
     private JFileChooser chooser;
@@ -72,7 +74,7 @@ public class Window extends JFrame {
 
     private JTable contentTable;
     private TableDirContent dirTable;
-    private Tree treeFS;
+    private FileSystemTree treeFS;
 
     private JLabel[] partition_name;
     private JProgressBar[] partition_sizeBars;
@@ -591,7 +593,7 @@ public class Window extends JFrame {
         // gbc.weightx = 1.0;
         gbc.gridx = 1;
         gbc.gridy = 0;
-        contentTable = new JTable(setDirContentTable());
+        contentTable = new JTable(setDirContentTable(fs_dir));
         panel.add(new JScrollPane(contentTable), gbc);
 
         gbc.gridx = 2;
@@ -599,6 +601,18 @@ public class Window extends JFrame {
         totalTable = new JTable(setFileDataTable());
         panel.add(new JScrollPane(totalTable), gbc);
 
+
+        fileSysTree.addTreeSelectionListener(new TreeSelectionListener () {
+
+			@Override
+			public void valueChanged(TreeSelectionEvent e) {
+                Object selection = fileSysTree.getLastSelectedPathComponent();
+				if (selection instanceof Directory) {
+                    setDirContentTable((Directory) selection);
+                    contentTable.updateUI();
+				}
+			}
+		});
         // gbc.fill = GridBagConstraints.HORIZONTAL;
         // gbc.gridx = 0;
         // gbc.gridy = 1;
@@ -616,10 +630,27 @@ public class Window extends JFrame {
         // root = new DefaultMutableTreeNode(pathToStart);
         // DefaultMutableTreeNode otro = new DefaultMutableTreeNode("Maricon");
         // root.add(otro);
-        treeFS = new Tree(fs_dir);
-        fileSysTree = new JTree(treeFS.setTree());
+        treeFS = new FileSystemTree(fs_dir);
+        // fileSysTree = new JTree(treeFS.setTree());
+        fileSysTree = new JTree(treeFS);
 
         return fileSysTree;
+    }
+
+    /**
+     *
+     * */
+    private void setTreeActions () {
+        fileSysTree.addTreeSelectionListener(new TreeSelectionListener () {
+
+			@Override
+			public void valueChanged(TreeSelectionEvent e) {
+                Object selection = fileSysTree.getLastSelectedPathComponent();
+				if (selection instanceof Directory) {
+                    setDirContentTable((Directory) selection);
+				}
+			}
+		});
     }
 
     /**
@@ -635,10 +666,12 @@ public class Window extends JFrame {
     /**
      * Set the Dir Table content
      *
+     * @param dir_node  a TableDirContent object
+     *
      * @return  a TableDirContent object
      * */
-    public TableDirContent setDirContentTable () {
-        dirTable.setElements(fs_dir);
+    public TableDirContent setDirContentTable (Directory dir_node) { 
+        dirTable.setElements(dir_node);
         return dirTable;
     }
 

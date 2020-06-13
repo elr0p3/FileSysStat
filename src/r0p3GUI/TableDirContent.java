@@ -40,6 +40,7 @@ public class TableDirContent implements TableModel {
      * @param dir   Directory node
      * */
     public void setElements (Directory dir) {
+        dirData = new ArrayList<String[]>();
         
         for (Map.Entry<String, Long> m : dir.getFilesContent().entrySet()) {
             String[] content = new String[3];
