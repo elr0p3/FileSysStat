@@ -57,7 +57,7 @@ public class Window extends JFrame {
 
     public static final String AUTHOR_NAME  = "Rodrigo Pereira";
     public static final String PROJECT_NAME = "FileSysStat";
-    public static final String PROJECT_VERS = "v1.0.3-1c1a8f2886";
+    public static final String PROJECT_VERS = "v1.0.4-9a93f40174";
     public static final String SOURCE_CODE  = "https://github.com/elr0p3/FileSysStat";
     
     private JFileChooser chooser;
@@ -595,24 +595,13 @@ public class Window extends JFrame {
         gbc.gridy = 0;
         contentTable = new JTable(setDirContentTable(fs_dir));
         panel.add(new JScrollPane(contentTable), gbc);
+        setTreeActions();
 
         gbc.gridx = 2;
         gbc.gridy = 0;
         totalTable = new JTable(setFileDataTable());
         panel.add(new JScrollPane(totalTable), gbc);
 
-
-        fileSysTree.addTreeSelectionListener(new TreeSelectionListener () {
-
-			@Override
-			public void valueChanged(TreeSelectionEvent e) {
-                Object selection = fileSysTree.getLastSelectedPathComponent();
-				if (selection instanceof Directory) {
-                    setDirContentTable((Directory) selection);
-                    contentTable.updateUI();
-				}
-			}
-		});
         // gbc.fill = GridBagConstraints.HORIZONTAL;
         // gbc.gridx = 0;
         // gbc.gridy = 1;
@@ -638,7 +627,7 @@ public class Window extends JFrame {
     }
 
     /**
-     *
+     * Set a listener to the File System Tree
      * */
     private void setTreeActions () {
         fileSysTree.addTreeSelectionListener(new TreeSelectionListener () {
@@ -648,6 +637,7 @@ public class Window extends JFrame {
                 Object selection = fileSysTree.getLastSelectedPathComponent();
 				if (selection instanceof Directory) {
                     setDirContentTable((Directory) selection);
+                    contentTable.updateUI();
 				}
 			}
 		});

@@ -39,7 +39,10 @@ public class FileSystemTree implements TreeModel {
             int half  = init + ((Directory) parent).getFilesContent().size();
             int total = half + ((Directory) parent).getSymLinkContent().size();
 
-            System.out.println(" CHILD --> " + index + " /// " + init + ":" + half + ":" + total);
+            if (index >= total)
+                index %= total;
+
+            // System.out.println(" CHILD --> " + index + " /// " + init + ":" + half + ":" + total);
             if (index < init)
                 return directoryPosition(parent, index, i);
 
@@ -89,27 +92,19 @@ public class FileSystemTree implements TreeModel {
         return null;
     }
 
-    private boolean forFile (int index, long total, int min) {
-        while (index >= total)
-            index -= total;
-        if (index < min)    return true;
-        return false;
-    }
-
 	@Override
 	public int getChildCount(Object parent) {
 		if (parent instanceof Directory) {
-            System.out.println(" NAME -> " + ((Directory) parent).getName() + " - - - - -");
-            System.out.println(" DIRs -> " + ((Directory) parent).getDirsContent().size());
-            System.out.println(" FILs -> " + ((Directory) parent).getFilesContent().size());
-            System.out.println(" LNKs -> " + ((Directory) parent).getSymLinkContent().size());
+            // System.out.println(" NAME -> " + ((Directory) parent).getName() + " - - - - -");
+            // System.out.println(" DIRs -> " + ((Directory) parent).getDirsContent().size());
+            // System.out.println(" FILs -> " + ((Directory) parent).getFilesContent().size());
+            // System.out.println(" LNKs -> " + ((Directory) parent).getSymLinkContent().size());
             int total = ((Directory) parent).getDirsContent().size() +
                         ((Directory) parent).getFilesContent().size() +
                         ((Directory) parent).getSymLinkContent().size();
-            System.out.println("TOTAL -> " + total);
+            // System.out.println("TOTAL -> " + total);
 
             return total;
-            // return ((Directory) parent).getDirsContent().size();
         }
 		return 0;
 	}
