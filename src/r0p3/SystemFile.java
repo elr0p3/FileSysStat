@@ -12,7 +12,6 @@ import java.io.BufferedReader;
 import java.io.IOException; 
 import java.io.InputStreamReader; 
 
-import java.io.IOException;
 import java.nio.file.AccessDeniedException;
 import java.nio.file.DirectoryIteratorException;
 import java.nio.file.FileStore;
